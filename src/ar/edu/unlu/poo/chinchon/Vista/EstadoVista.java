@@ -1,0 +1,5 @@
+package ar.edu.unlu.poo.chinchon.Vista;
+
+public enum EstadoVista {
+    MENU,AGREGAR_JUGADOR,INICIAR_PARTIDA,AGARRAR_CARTA,TIRAR_CARTA,MENU_JUGADOR,CAMBIAR_CARTAS,CORTAR
+}
