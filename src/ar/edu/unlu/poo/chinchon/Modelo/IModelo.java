@@ -31,9 +31,14 @@ public interface IModelo extends IObservableRemoto {
 
     public void cambiarMazoPorPilaDescarte() throws RemoteException;
 
-    public void agarrarCarta(int opcion) throws RemoteException;
+    public void agarrarCartaDelMazo() throws RemoteException;
 
-    public void tirarCarta(int opcion) throws RemoteException;
+    public void agarrarCartaDeLaPiLaDescarte() throws RemoteException;
+
+    public void tirarCartaExtra() throws RemoteException;
+
+    public void tirarCartaMano(int posCarta )throws RemoteException;
+
 
     public void moverCartas(int posCartaUno,int posCartaDos) throws RemoteException;
 

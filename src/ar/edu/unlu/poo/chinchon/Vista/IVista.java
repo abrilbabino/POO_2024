@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.chinchon.Vista;
 
 import ar.edu.unlu.poo.chinchon.Modelo.CartaMostrable;
+import ar.edu.unlu.poo.chinchon.Modelo.JugadorMostrable;
 
 import java.util.ArrayList;
 
@@ -17,5 +18,6 @@ public interface IVista {
     public void esperarTurno();
     public void mostrarMano(ArrayList<CartaMostrable> mano);
     public void verificarPerdedores();
+    public void mostrarPuntos(ArrayList<JugadorMostrable> jugador);
     public boolean isTurno();
 }

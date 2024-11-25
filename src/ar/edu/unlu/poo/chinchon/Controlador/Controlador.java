@@ -19,6 +19,56 @@ public class Controlador implements IControladorRemoto {
         this.vista=vista;
     }
 
+    public void agregarJugador(String nombre){
+        try {
+            Jugador j = new Jugador(nombre);
+            modelo.agregarJugador(j);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<JugadorMostrable> obtenerJugadores(){
+        ArrayList<JugadorMostrable> jugadores=new ArrayList<>();
+        try{
+            jugadores=new ArrayList<JugadorMostrable>(modelo.getJugadores());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return jugadores;
+    }
+
+    public int faltanJugadores(){
+        int valor=-1;
+        int cantidadJ = obtenerJugadores().size();
+        if (cantidadJ == 0) {
+            valor=2;
+        } else if (cantidadJ == 1) {
+            valor=1;
+        }
+        return valor;
+    }
+
+    public boolean iniciarJuego(){
+        boolean inicia=false;
+        try {
+            inicia=modelo.iniciar();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return inicia;
+    }
+
+    public  ArrayList<CartaMostrable> obtenerMazo(){
+        ArrayList<CartaMostrable> mazo=new ArrayList<>();
+        try {
+            mazo=new ArrayList<CartaMostrable>(modelo.getMazo().getPilaDeCartas());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return mazo;
+    }
+
     public ArrayList<CartaMostrable> obtenerCartasMano(){
         ArrayList<CartaMostrable> mano=new ArrayList<>();
         try {
@@ -50,31 +100,6 @@ public class Controlador implements IControladorRemoto {
         return cartaExtra;
     }
 
-    public  ArrayList<CartaMostrable> obtenerMazo(){
-        ArrayList<CartaMostrable> mazo=new ArrayList<>();
-        try {
-            mazo=new ArrayList<CartaMostrable>(modelo.getMazo().getPilaDeCartas());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return mazo;
-    }
-
-    public int faltanJugadores(){
-        int valor=-1;
-        try {
-            int cantidadJ = modelo.getJugadores().size();
-            if (cantidadJ == 0) {
-                valor=2;
-            } else if (cantidadJ == 1) {
-                valor=1;
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return valor;
-    }
-
     public String jugadorActual(){
         String nombre=null;
         try {
@@ -86,62 +111,22 @@ public class Controlador implements IControladorRemoto {
         return nombre;
     }
 
-    public void agregarJugador(String nombre){
-        try {
-            Jugador j = new Jugador(nombre);
-            modelo.agregarJugador(j);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void mostrarJugadores(){
-        try {
-            ArrayList<Jugador> jugadores = modelo.getJugadores();
-            if (jugadores.size() == 0) {
-                vista.mostrarMensaje("No hay jugadores");
-            } else {
-                for (Jugador jugador : jugadores) {
-                    vista.mostrarMensaje(jugador.getNombre());
-                }
-            }
-        }catch (RemoteException e){
-            e.printStackTrace();
-        }
-    }
-
-    public String getGanador(){
-        String nombreGanador=null;
-        try {
-            nombreGanador=modelo.getGanador().getNombre();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return nombreGanador;
-    }
-
-    public boolean iniciarJuego(){
-        boolean inicia=false;
-        try {
-            inicia=modelo.iniciar();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return inicia;
-    }
-
     public void cambiarTurno(){
         try {
             modelo.cambiarTurno();
         } catch (RemoteException e) {
             e.printStackTrace();
-            
         }
     }
 
     public void agarrarCarta(int opcion){
         try {
-            modelo.agarrarCarta(opcion);
+            if(opcion==1){
+                modelo.agarrarCartaDelMazo();
+            }
+            else{
+                modelo.agarrarCartaDeLaPiLaDescarte();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -149,7 +134,12 @@ public class Controlador implements IControladorRemoto {
 
     public void tirarCarta(int posicionCarta){
         try {
-            modelo.tirarCarta(posicionCarta);
+            if(posicionCarta<8){
+                modelo.tirarCartaMano(posicionCarta-1);
+            }
+            else{
+                modelo.tirarCartaExtra();
+            }
             cambiarTurno();
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -158,8 +148,6 @@ public class Controlador implements IControladorRemoto {
 
     public void moverCartas(int pos1,int pos2){
         try {
-            vista.mostrarMensaje("CARTA TOPE");
-            vista.mostrarCarta(obtenerCartaTope());
             modelo.moverCartas(pos1, pos2);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -175,7 +163,7 @@ public class Controlador implements IControladorRemoto {
     }
     public ArrayList<String> obtenerPerdedores(){
         ArrayList<String> perdedores=new ArrayList<>();
-        for(Jugador j: obtenerJugadores()){
+        for(JugadorMostrable j: obtenerJugadores()){
             if(j.getEstado().equals(EstadoJugador.PERDEDOR)){
                 perdedores.add(j.getNombre());
             }
@@ -202,16 +190,7 @@ public class Controlador implements IControladorRemoto {
         }
         return jugadorActual;
     }
-    
-    public ArrayList<Jugador> obtenerJugadores(){
-        ArrayList<Jugador> jugadores=new ArrayList<>();
-        try{
-            jugadores=new ArrayList<>(modelo.getJugadores());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return jugadores;
-    }
+
     public int obtenerCantidadDeRondas(){
         int cantRondas=-1;
         try{
@@ -221,6 +200,23 @@ public class Controlador implements IControladorRemoto {
         }
         return cantRondas;
     }
+
+    public String getGanador(){
+        String nombreGanador=null;
+        try {
+            nombreGanador=modelo.getGanador().getNombre();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return nombreGanador;
+    }
+
+    private void actualizarVistaTurno() {
+        if(jugadorActual()!=null){
+            vista.verificarTurno();
+        }
+    }
+
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T modeloRemoto) throws RemoteException {
         this.modelo = (IModelo) modeloRemoto;
@@ -237,31 +233,31 @@ public class Controlador implements IControladorRemoto {
                 break;
             case Eventos.JUEGO_INICIADO:
                 vista.limpiarPantalla();
-                vista.mostrarMensaje("RONDA Nº "+(obtenerCantidadDeRondas()+1));
-                vista.mostrarMensaje("PUNTOS DE LOS JUGADORES");
-                for (Jugador jugador : obtenerJugadores()) {
-                    vista.mostrarMensaje("PUNTOS DEL JUGADOR " + jugador.getNombre() + ": " + jugador.getPuntos());
-                }
-                Timer timer = new Timer(8000, new ActionListener()
-                { @Override public void actionPerformed(ActionEvent e) {
-                    actualizarVistaTurno(); } });
-                timer.setRepeats(false);
-                timer.start();
+                vista.mostrarPuntos(obtenerJugadores());
+                vista.mostrarMazo(obtenerMazo());
+                vista.mostrarMensaje("CARTA TOPE PILA DESCARTE");
+                vista.mostrarCarta(obtenerCartaTope());
+                actualizarVistaTurno();
                 break;
             case Eventos.CAMBIA_TURNO:
                 actualizarVistaTurno();
                 break;
             case Eventos.CAMBIA_CARTA_TOPE:
-                if(vista.isTurno()) {
-                    vista.mostrarMensaje("CARTA TOPE PILA DESCARTE");
-                    if (obtenerCartaTope() != null) {
-                        vista.mostrarCarta(obtenerCartaTope());
-                    }
+                vista.limpiarPantalla();
+                vista.mostrarMensaje("CARTA TOPE PILA DESCARTE");
+                if (obtenerCartaTope() != null) {
+                    vista.mostrarCarta(obtenerCartaTope());
                 }
                 break;
-
+            case Eventos.CAMBIA_ORDEN_CARTAS:
+                if(vista.isTurno()){
+                    vista.limpiarPantalla();
+                    vista.mostrarMensaje("CARTA TOPE PILA DESCARTE");
+                    vista.mostrarCarta(obtenerCartaTope());
+                    vista.mostrarMano(obtenerCartasMano());
+                }
+                break;
             case Eventos.CAMBIA_MAZO:
-                vista.mostrarMensaje("MAZO");
                 if (!obtenerMazo().isEmpty()) {
                     vista.mostrarMazo(obtenerMazo());
                 }
@@ -269,8 +265,8 @@ public class Controlador implements IControladorRemoto {
 
             case Eventos.CAMBIA_MANO:
                 if(vista.isTurno()) {
+                    vista.limpiarPantalla();
                     if (jugadorActual() != null && obtenerJugadorActual() != null && !obtenerCartasMano().isEmpty()) {
-                        vista.mostrarMensaje("MANO JUGADOR: " + jugadorActual());
                         vista.mostrarMano(obtenerCartasMano());
                         if(obtenerCartaExtra()!=null) {
                             vista.mostrarMensaje("CARTA LEVANTADA");
@@ -296,9 +292,4 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
-    private void actualizarVistaTurno() {
-        if(jugadorActual()!=null){
-           vista.verificarTurno();
-        }
-    }
 }

@@ -32,11 +32,6 @@ public class Mano implements Serializable {
         mano.add(c);
     }
 
-    public Carta tirarCarta(Carta c){
-        System.out.println("TIRANDO CARTA");
-        mano.remove(c);
-        return  c;
-    }
 
     public void moverCartas(int p1, int p2) {
         Carta temp=mano.get(p1-1);
@@ -48,16 +43,20 @@ public class Mano implements Serializable {
         mano.clear();
     }
 
+    public Carta tirarCarta(Carta c){
+        mano.remove(c);
+        return  c;
+    }
+
     public Carta tirarCartaExtra(){
         Carta c=this.getCartaExtraTurno();
         setCartaExtraTurno(null);
         return tirarCarta(c);
     }
 
-    public Carta cambiarCartaExtraPorCartaMano(int pos){
-        System.out.println("CAMBIANDO CARTA EN MANO");
-        Carta c=mano.get(pos);
-        mano.set(pos,cartaExtraTurno);
+    public Carta cambiarCartaExtraPorCartaMano(int posicionCarta){
+        Carta c=mano.get(posicionCarta);
+        mano.set(posicionCarta,cartaExtraTurno);
         setCartaExtraTurno(null);
         return tirarCarta(c);
     }

@@ -3,7 +3,7 @@ package ar.edu.unlu.poo.chinchon.Modelo;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Jugador implements Serializable {
+public class Jugador implements JugadorMostrable {
     private String nombre;
     private Mano mano;
     private int puntos;

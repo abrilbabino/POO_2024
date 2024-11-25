@@ -1,6 +1,5 @@
 package ar.edu.unlu.poo.chinchon.Modelo;
 
-import java.time.temporal.JulianFields;
 import java.util.ArrayList;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 import java.io.Serializable;
@@ -114,48 +113,40 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
         pilaDescarte.vaciarPila();
     }
 
-    //SI LA OPCION ES 1 AGARRA UNA CARTA DEL MAZO, SI LA OPCION ES 2 AGARRA LA CARTA TOPE DE LA PILA DESCARTE
     @Override
-    public void agarrarCarta(int opcion) throws RemoteException {
-        if (opcion == 1) {
-            jugadorActual.sacarCartaDelMazo(mazo);
+    public void agarrarCartaDelMazo() throws RemoteException {
+        if (mazo.isVacio()) {
+            cambiarMazoPorPilaDescarte();
             notificarObservadores(Eventos.CAMBIA_MAZO);
-            notificarObservadores(Eventos.CAMBIA_MANO);
-            if (mazo.isVacio()) {
-                cambiarMazoPorPilaDescarte();
-                notificarObservadores(Eventos.CAMBIA_MAZO);
-            }
-        } else {
-            jugadorActual.sacarCartaDeLaPiLaDescarte(pilaDescarte);
-            notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
-            notificarObservadores(Eventos.CAMBIA_MANO);
         }
+        jugadorActual.sacarCartaDelMazo(mazo);
+        notificarObservadores(Eventos.CAMBIA_MAZO);
+        notificarObservadores(Eventos.CAMBIA_MANO);
     }
 
-    //SI OPCION ESTA ENTRE 1 Y 7 SE TIRA UNA CARTA DE LA MANO SI OPCION ES 8 SE TIRA LA CARTA LEVANTADA
-    //EN EL TURNO
     @Override
-    public void tirarCarta(int opcion) throws RemoteException {
-        Carta nuevoTope;
-        if(opcion<8) {
-            nuevoTope = jugadorActual.getMano().cambiarCartaExtraPorCartaMano(opcion-1);
-            pilaDescarte.agregarCarta(nuevoTope);
-            notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
-            notificarObservadores(Eventos.CAMBIA_MANO);
-        }
-        else{
-            nuevoTope= jugadorActual.getMano().tirarCartaExtra();
-            pilaDescarte.agregarCarta(nuevoTope);
-            notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
-            notificarObservadores(Eventos.CAMBIA_MANO);
-        }
+    public void agarrarCartaDeLaPiLaDescarte() throws RemoteException {
+        jugadorActual.sacarCartaDeLaPiLaDescarte(pilaDescarte);
+        notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
+        notificarObservadores(Eventos.CAMBIA_MANO);
+    }
+
+    public void tirarCartaExtra() throws RemoteException{
+        pilaDescarte.agregarCarta(jugadorActual.getMano().tirarCartaExtra());
+        notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
+        notificarObservadores(Eventos.CAMBIA_MANO);
+    }
+    public void tirarCartaMano(int posCarta) throws RemoteException {
+        pilaDescarte.agregarCarta(jugadorActual.getMano().cambiarCartaExtraPorCartaMano(posCarta));
+        notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
+        notificarObservadores(Eventos.CAMBIA_MANO);
     }
 
     //MUEVE LAS CARTAS DE LA MANO PARA IR ACOMODANDO EL JUEGO
     @Override
     public void moverCartas(int carta1,int carta2) throws RemoteException {
         jugadorActual.getMano().moverCartas(carta1,carta2);
-        notificarObservadores(Eventos.CAMBIA_MANO);
+        notificarObservadores(Eventos.CAMBIA_ORDEN_CARTAS);
     }
 
     //ALGUIEN CORTO PERO NO HAY GANADOR TODAVIA SE VACIAN LAS MANOS DE LOS JUGADORES Y LA PILA DESCARTE
@@ -186,7 +177,12 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     public boolean cortar(int opcion) throws RemoteException {
         boolean corta=false;
         Carta cartaExtra=jugadorActual.getMano().getCartaExtraTurno();
-        tirarCarta(opcion);
+        if(opcion==8){
+            tirarCartaExtra();
+        }
+        else{
+            tirarCartaMano(opcion-1);
+        }
         if(jugadorActual.getMano().puedeCortar()) {
             if (jugadorActual.getMano().getCortaCon() == CortaCon.CHINCHON) {
                 setGanador(jugadorActual);
@@ -203,12 +199,25 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
                 for (Jugador j : jugadores) {
                     j.sumarPuntos(j.getMano().calcularPuntos());
                 }
+                int perdedores=0;
                 for (Jugador j : jugadores) {
                     if (!j.sigueJugando()) {
+                        perdedores++;
                         j.setEstado(EstadoJugador.PERDEDOR);
                     }
                 }
-                notificarObservadores(Eventos.NUEVA_RONDA);
+                if(perdedores==jugadores.size()-1) {
+                    for(Jugador j: jugadores){
+                        if(j.sigueJugando()){
+                            j.setEstado(EstadoJugador.GANADOR);
+                            setGanador(j);
+                        }
+                    }
+                    notificarObservadores(Eventos.FIN_DEL_JUEGO);
+                }
+                else {
+                    notificarObservadores(Eventos.NUEVA_RONDA);
+                }
             }
             corta=true;
         }
