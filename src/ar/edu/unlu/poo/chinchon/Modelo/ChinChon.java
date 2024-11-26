@@ -156,6 +156,7 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
         pilaDescarte.vaciarPila();
         for (Jugador jugador : jugadores) {
             jugador.getMano().vaciarMano();
+            jugador.getMano().setCortaCon(null);
         }
         mazo=new Mazo();
         if(cantidadDeRondas<jugadores.size()) {
@@ -188,15 +189,18 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
                 setGanador(jugadorActual);
                 jugadorActual.setEstado(EstadoJugador.GANADOR);
                 for (Jugador j : jugadores) {
+                    System.out.println("PUNTOS JUGADOR "+j.getNombre());
                     j.sumarPuntos(j.getMano().calcularPuntos());
                 }
                 notificarObservadores(Eventos.FIN_DEL_JUEGO);
             } else {
                 if (jugadorActual.getMano().getCortaCon() == CortaCon.MENOS_DIEZ) {
                     jugadorActual.restarDiez();
+                    System.out.println("CORTO CON MENOS DIEZ");
                 }
                 cantidadDeRondas++;
                 for (Jugador j : jugadores) {
+                    System.out.println("PUNTOS JUGADOR "+j.getNombre());
                     j.sumarPuntos(j.getMano().calcularPuntos());
                 }
                 int perdedores=0;

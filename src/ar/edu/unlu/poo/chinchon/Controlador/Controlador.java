@@ -188,10 +188,17 @@ public class Controlador implements IControladorRemoto {
     }
     public void cortar(int opcion){
         try {
-            if(!modelo.cortar(opcion)) {
-                vista.mostrarMensaje("TODAVIA NO PODES CORTAR");
+            if(obtenerCantidadDeRondas()==0){
+                vista.mostrarMensaje("NO SE PUEDE CORTAR EN LA PRIMER RONDA");
                 vista.opcionesCartasTirarOCortar();
             }
+            else {
+                if (!modelo.cortar(opcion)) {
+                    vista.mostrarMensaje("TODAVIA NO PODES CORTAR");
+                    vista.opcionesCartasTirarOCortar();
+                }
+            }
+
         }catch (RemoteException e){
             e.printStackTrace();
         }

@@ -16,6 +16,10 @@ public class Mano implements Serializable {
         return this.cortaCon;
     }
 
+    public void setCortaCon(CortaCon cortaCon){
+        this.cortaCon=cortaCon;
+    }
+
     public ArrayList<Carta> getCartas(){
         return this.mano;
     }
@@ -32,7 +36,6 @@ public class Mano implements Serializable {
         mano.add(c);
     }
 
-
     public void moverCartas(int p1, int p2) {
         Carta temp=mano.get(p1-1);
         mano.set(p1-1,mano.get(p2-1));
@@ -41,6 +44,8 @@ public class Mano implements Serializable {
 
     public void vaciarMano(){
         mano.clear();
+        primerJuego.clear();
+        segundoJuego.clear();
     }
 
     public Carta tirarCarta(Carta c){
@@ -65,6 +70,8 @@ public class Mano implements Serializable {
             if(!tieneNumerosIguales()){
                 tieneEscalera();
             }
+            mano.removeAll(primerJuego);
+            mano.removeAll(segundoJuego);
         }
         else{
             if(tieneNumerosIguales()){
@@ -72,14 +79,18 @@ public class Mano implements Serializable {
                     tieneNumerosIguales();
                 }
             }
+            mano.removeAll(primerJuego);
+            mano.removeAll(segundoJuego);
         }
     }
     public int calcularPuntos(){
         if(mano.size()>1) {
+            System.out.println("SACANDO CARTAS JUEGO");
             sacarCartasJuego();
         }
         int suma=0;
         for(Carta c: mano){
+            System.out.println("SUMA "+ c.getNumero());
             suma+=c.getNumero();
         }
         System.out.println("SUMA TOTAL "+ suma);
@@ -102,49 +113,82 @@ public class Mano implements Serializable {
             }
         });
     }
-    public boolean puedeCortar() {
 
+    private boolean prueba1() {
+        if (tieneEscalera()) {
+            if (!tieneNumerosIguales()) {
+                if(tieneEscalera()){
+                    return true;
+                }
+            }
+            else{
+                return true;
+            }
+        } else if (tieneNumerosIguales()) {
+            if (!tieneEscalera()) {
+                if(tieneNumerosIguales()){
+                    return true;
+                }
+            }
+            else{
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean prueba2(){
+        if (tieneNumerosIguales()) {
+            if (!tieneEscalera()) {
+                if(tieneNumerosIguales()){
+                    return true;
+                }
+            }
+            else{
+                return true;
+            }
+        } else if (tieneEscalera()) {
+            if (!tieneNumerosIguales()) {
+                if(tieneEscalera()){
+                    return true;
+                }
+            }
+            else{
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean puedeCortar() {
         if (tieneChinChon()) {
             cortaCon = CortaCon.CHINCHON;
-        }
-        else{
-           if(tieneEscalera()){
-               if(!tieneNumerosIguales()) {
-                   tieneEscalera();
-               }
-           }
-           else if(tieneNumerosIguales()){
-               if(!tieneEscalera()) {
-                   tieneNumerosIguales();
-               }
-           }
-           else{
-               return false;
-           }
-           if (primerJuego.size() == 3 && segundoJuego.size() == 4 || primerJuego.size() == 4 && segundoJuego.size() == 3) {
-               cortaCon = CortaCon.MENOS_DIEZ;
-           } else if(primerJuego.size()==3&& segundoJuego.size()==3 && mano.get(0).getNumero()<=7||primerJuego.size()==6 && mano.get(0).getNumero()<=7 ||segundoJuego.size()==6&& mano.get(0).getNumero()<=7){
-               cortaCon = CortaCon.SOBRA_CARTA;
-           }
-           else{
-               mano.addAll(primerJuego);
-               mano.addAll(segundoJuego);
-               primerJuego.clear();
-               segundoJuego.clear();
-               return false;
-           }
-        }
-        System.out.println("MANO DEL QUE CORTA");
-        for (Carta c: mano){
-            System.out.println("Numero: "+ c.getNumero()+ " Palo: "+c.getPalo().toString());
-        }
-        System.out.println("JUEGO 1");
-        for(Carta c: primerJuego){
-            System.out.println("Numero: "+ c.getNumero()+ " Palo: "+c.getPalo().toString());
-        }
-        System.out.println("JUEGO 2");
-        for(Carta c: segundoJuego){
-            System.out.println("Numero: "+ c.getNumero()+ " Palo: "+c.getPalo().toString());
+        } else {
+            boolean primerPrueba = prueba1();
+            if (primerPrueba) {
+                if (primerJuego.size() == 3 && segundoJuego.size() == 4 || primerJuego.size() == 4 && segundoJuego.size() == 3) {
+                    cortaCon = CortaCon.MENOS_DIEZ;
+                } else if (primerJuego.size() == 3 && segundoJuego.size() == 3 && mano.get(0).getNumero() <= 7 || primerJuego.size() == 6 && mano.get(0).getNumero() <= 7 || segundoJuego.size() == 6 && mano.get(0).getNumero() <= 7) {
+                    cortaCon = CortaCon.SOBRA_CARTA;
+                }
+            } else {
+                mano.addAll(primerJuego);
+                mano.addAll(segundoJuego);
+                primerJuego.clear();
+                segundoJuego.clear();
+                boolean segundaPrueba = prueba2();
+                if (segundaPrueba) {
+                    if (primerJuego.size() == 3 && segundoJuego.size() == 4 || primerJuego.size() == 4 && segundoJuego.size() == 3) {
+                        cortaCon = CortaCon.MENOS_DIEZ;
+                    } else if (primerJuego.size() == 3 && segundoJuego.size() == 3 && mano.get(0).getNumero() <= 7 || primerJuego.size() == 6 && mano.get(0).getNumero() <= 7 || segundoJuego.size() == 6 && mano.get(0).getNumero() <= 7) {
+                        cortaCon = CortaCon.SOBRA_CARTA;
+                    }
+                } else {
+                    mano.addAll(primerJuego);
+                    mano.addAll(segundoJuego);
+                    primerJuego.clear();
+                    segundoJuego.clear();
+                    return false;
+                }
+            }
         }
         return true;
     }

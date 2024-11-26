@@ -11,6 +11,7 @@ import ar.edu.unlu.rmimvc.Util;
 import ar.edu.unlu.rmimvc.servidor.Servidor;
 
 public class AppServidor {
+
         public static void main(String[] args) {
             ArrayList<String> ips = Util.getIpDisponibles();
             String ip = (String) JOptionPane.showInputDialog(
