@@ -65,7 +65,7 @@ public class Mano implements Serializable {
         setCartaExtraTurno(null);
         return tirarCarta(c);
     }
-    public void sacarCartasJuego(){
+    private void sacarCartasJuego(){
         if(tieneEscalera()){
             if(!tieneNumerosIguales()){
                 tieneEscalera();
