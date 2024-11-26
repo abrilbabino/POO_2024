@@ -12,12 +12,11 @@ public interface IVista {
     public void mostrarMenuPrincipal();
     public void mostrarMenuJugador();
     public void opcionesCartasTirar();
-    public void limpiarPantalla();
+    public void opcionesCartasTirarOCortar();
     public void verificarTurno();
-    public void esTurno();
-    public void esperarTurno();
     public void mostrarMano(ArrayList<CartaMostrable> mano);
     public void verificarPerdedores();
     public void mostrarPuntos(ArrayList<JugadorMostrable> jugador);
     public boolean isTurno();
+    public void limpiarPantalla();
 }

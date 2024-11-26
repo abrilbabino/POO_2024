@@ -19,6 +19,21 @@ public class Controlador implements IControladorRemoto {
         this.vista=vista;
     }
 
+    public boolean existeJugador(String nombre){
+        boolean existe=false;
+        try {
+            ArrayList<Jugador> jugadores =modelo.getJugadores();
+            for(Jugador j: jugadores){
+                if(j.getNombre().equals(nombre)){
+                    existe=true;
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return existe;
+    }
+
     public void agregarJugador(String nombre){
         try {
             Jugador j = new Jugador(nombre);
@@ -165,6 +180,7 @@ public class Controlador implements IControladorRemoto {
         ArrayList<String> perdedores=new ArrayList<>();
         for(JugadorMostrable j: obtenerJugadores()){
             if(j.getEstado().equals(EstadoJugador.PERDEDOR)){
+                System.out.println("Agregando a perdedores a "+ j.getNombre());
                 perdedores.add(j.getNombre());
             }
         }
@@ -174,7 +190,7 @@ public class Controlador implements IControladorRemoto {
         try {
             if(!modelo.cortar(opcion)) {
                 vista.mostrarMensaje("TODAVIA NO PODES CORTAR");
-                vista.opcionesCartasTirar();
+                vista.opcionesCartasTirarOCortar();
             }
         }catch (RemoteException e){
             e.printStackTrace();
@@ -224,7 +240,6 @@ public class Controlador implements IControladorRemoto {
 
     @Override
     public void actualizar(IObservableRemoto modelo, Object evento) throws RemoteException {
-        ArrayList<CartaMostrable> mano;
         switch(evento) {
             case Eventos.FALTAN_JUGADORES:
                 if (faltanJugadores() != -1) {
@@ -278,6 +293,7 @@ public class Controlador implements IControladorRemoto {
 
             case Eventos.FIN_DEL_JUEGO:
                 if(getGanador()!=null) {
+                    vista.mostrarPuntos(obtenerJugadores());
                     vista.mostrarMensaje("GANADOR: JUGADOR " + getGanador());
                     vista.mostrarMensaje("JUEGO TERMINADO");
                 }

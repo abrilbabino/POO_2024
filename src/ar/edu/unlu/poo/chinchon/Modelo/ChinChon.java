@@ -215,6 +215,22 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
                     }
                     notificarObservadores(Eventos.FIN_DEL_JUEGO);
                 }
+                else if(perdedores==jugadores.size()){
+                    Jugador menosPuntos=null;
+                    boolean primero=true;
+                    for(Jugador jugador: jugadores){
+                        if(primero){
+                            menosPuntos=jugador;
+                        }
+                        else{
+                            if(jugador.getPuntos()<menosPuntos.getPuntos()){
+                                menosPuntos=jugador;
+                            }
+                        }
+                    }
+                    setGanador(menosPuntos);
+                    notificarObservadores(Eventos.FIN_DEL_JUEGO);
+                }
                 else {
                     notificarObservadores(Eventos.NUEVA_RONDA);
                 }

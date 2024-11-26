@@ -1,13 +1,13 @@
 package ar.edu.unlu.poo.chinchon.Vista;
 
 import ar.edu.unlu.poo.chinchon.Controlador.Controlador;
-import ar.edu.unlu.poo.chinchon.Modelo.*;
+import ar.edu.unlu.poo.chinchon.Modelo.CartaMostrable;
+import ar.edu.unlu.poo.chinchon.Modelo.JugadorMostrable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 
 public class VistaConsolaG extends JFrame implements  IVista {
@@ -39,7 +39,7 @@ public class VistaConsolaG extends JFrame implements  IVista {
         });
         mostrarMenuPrincipal();
     }
-    public void procesarEntrada(String entrada) {
+    private void procesarEntrada(String entrada) {
         switch (estadoVista) {
             case MENU:
                 limpiarPantalla();
@@ -77,8 +77,13 @@ public class VistaConsolaG extends JFrame implements  IVista {
     private void agregarJugador() {
         if(!ingresaTexto.getText().equals("")) {
             nombreJugador = ingresaTexto.getText();
-            controlador.agregarJugador(nombreJugador);
-            mostrarMenuPrincipal();
+            if(!controlador.existeJugador(nombreJugador)) {
+                controlador.agregarJugador(nombreJugador);
+                mostrarMenuPrincipal();
+            }
+            else{
+                println("ESE JUGADOR YA ESTA EN EL JUEGO, INGRESE OTRO: ");
+            }
         }
         else{
             println("INGRESE UN NOMBRE VALIDO PARA EL JUGADOR: ");
@@ -144,7 +149,7 @@ public class VistaConsolaG extends JFrame implements  IVista {
         println("MENU JUGADOR");
         println("1-Agarrar carta del mazo");
         println("2-Agarrar carta tope de la pila descarte");
-        println("3-Mover cartas Ncarta-Ncarta");
+        println("3-Mover cartas");
         print("Seleccione una opcion: ");
     }
 
@@ -166,12 +171,46 @@ public class VistaConsolaG extends JFrame implements  IVista {
         }
     }
 
-    private void procesarCartasAMover(String entrada){
-        controlador.moverCartas(Integer.parseInt(entrada.substring(0,1)),Integer.parseInt(entrada.substring(2,3)));
-        mostrarMenuJugador();
+    private boolean esNumero(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
-    private void opcionesCartasTirarOCortar() {
+    private void procesarCartasAMover(String entrada){
+        if(entrada.length()==3) {
+            if(entrada.substring(1,2).equals("-")) {
+                String n1=entrada.substring(0,1);
+                String n2=entrada.substring(2,3);
+                if(esNumero(n1)&& esNumero(n2)) {
+                    int numero1 = Integer.parseInt(n1);
+                    int numero2 = Integer.parseInt(n2);
+                    if (numero1 >= 1 && numero1 <= 7 && numero2 >= 1 && numero2 <= 7) {
+                        controlador.moverCartas(Integer.parseInt(entrada.substring(0, 1)), Integer.parseInt(entrada.substring(2, 3)));
+                        mostrarMenuJugador();
+                    } else {
+                        println("POS_CARTA FUERA DEL RANGO, DEBE SER UN NUMERO ENTRE [1-7]");
+                        println("DEBE INGRESAR POS_CARTA_MOVER1-POS_CARTA_MOVER2: ");
+                    }
+                }
+                else{
+                    println("FORMATO INCORRECTO POS_CARTA DEBE SER UN NUMERO");
+                    println("DEBE INGRESAR POS_CARTA_MOVER1-POS_CARTA_MOVER2: ");
+                }
+            }
+            else{
+                println("FORMATO INCORRECTO, DEBE INGRESAR POS_CARTA_MOVER1-POS_CARTA_MOVER2: ");
+            }
+        }
+        else{
+            println("FORMATO INCORRECTO, DEBE INGRESAR POS_CARTA_MOVER1-POS_CARTA_MOVER2: ");
+        }
+    }
+
+    public void opcionesCartasTirarOCortar() {
         estadoVista=EstadoVista.TIRAR_O_CORTAR;
         println("1- TIRAR CARTA");
         println("2- CORTAR");
@@ -272,14 +311,14 @@ public class VistaConsolaG extends JFrame implements  IVista {
         ArrayList<String> perdedores=controlador.obtenerPerdedores();
         for(String nombre: perdedores){
             if(nombre.equals(nombreJugador)){
-                println("PERDISTE :(");
+                println("PERDISTE :( ");
                 finalizar();
             }
         }
     }
 
 
-    public void esperarTurno(){
+    private void esperarTurno(){
         println("\nTURNO DEL JUGADOR: "+ controlador.jugadorActual());
         println("");
         println("ESPERANDO");
@@ -288,7 +327,7 @@ public class VistaConsolaG extends JFrame implements  IVista {
             component.setEnabled(false);
         }
     }
-    public void esTurno(){
+    private void esTurno(){
         println("\nES TU TURNO "+ controlador.jugadorActual());
         Component[] components = panelPrincipal.getComponents();
         for (Component component : components) {

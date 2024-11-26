@@ -80,9 +80,9 @@ public class Mano implements Serializable {
         }
         int suma=0;
         for(Carta c: mano){
-            System.out.println("SUMA "+ c.getNumero());
             suma+=c.getNumero();
         }
+        System.out.println("SUMA TOTAL "+ suma);
         return suma;
     }
 

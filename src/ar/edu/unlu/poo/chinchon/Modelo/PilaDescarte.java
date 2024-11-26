@@ -2,14 +2,14 @@ package ar.edu.unlu.poo.chinchon.Modelo;
 
 import java.io.Serializable;
 
-public class PilaDescarte extends PilaDeCartas implements Serializable {
+public class PilaDescarte extends PilaDeCartas{
     private Carta cartaTope;
 
     public Carta getTope() {
         return this.cartaTope;
     }
 
-    public void setCartaTope() {
+    private void setCartaTope() {
         if (pilaDeCartas.size() > 0) {
             this.cartaTope = pilaDeCartas.get(pilaDeCartas.size() - 1);
             pilaDeCartas.remove(cartaTope);

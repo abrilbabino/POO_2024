@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Mazo extends PilaDeCartas implements Serializable {
+public class Mazo extends PilaDeCartas {
 
     public Mazo(){
         super();
         crearBaraja();
     }
 
-    public void crearBaraja() {
+    private void crearBaraja() {
         Carta carta;
         for (Palo p : Palo.values()) {
             for (int j = 1; j <= 12; j++) {

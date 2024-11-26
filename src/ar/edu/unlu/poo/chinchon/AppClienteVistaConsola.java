@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import ar.edu.unlu.poo.chinchon.Controlador.Controlador;
-import ar.edu.unlu.poo.chinchon.Modelo.ChinChon;
 import ar.edu.unlu.poo.chinchon.Vista.*;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.Util;
