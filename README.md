@@ -1,8 +1,8 @@
+# 🃏 **Proyecto Chinchón**  
+
 ## ALUMNO  
 **ABRIL BABINO**  
 **LEGAJO: 199157**  
-
-# 🃏 **Proyecto Chinchón**  
 
 ## Descripción  
 Este proyecto es una implementación del clásico juego de cartas **Chinchón**, diseñado para ser interactivo y funcional.  
