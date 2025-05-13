@@ -14,7 +14,7 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     private int cantidadDeRondas;
     private Jugador ganador;
     private Jugador jugadorActual;
-
+    private ValidadorDeJuego validadorDeJuego=new ValidadorDeJuego();
     public ChinChon() {
         jugadores = new ArrayList<>();
         mazo = new Mazo();
@@ -82,7 +82,9 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
                 m.recibirCarta(mazo.darCarta());
             }
         }
-        pilaDescarte.agregarCarta(mazo.darCarta());
+        if(pilaDescarte.getPilaDeCartas().isEmpty()){
+            pilaDescarte.agregarCarta(mazo.darCarta());
+        }
     }
     //SI HAY POR LO MENOS 2 JUGADORES INICIA EL JUEGO SINO NOTIFICA FALTAN JUGADORES
     @Override
@@ -128,24 +130,31 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     public void agarrarCartaDeLaPiLaDescarte() throws RemoteException {
         jugadorActual.sacarCartaDeLaPiLaDescarte(pilaDescarte);
         notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
-        notificarObservadores(Eventos.CAMBIA_MANO);
     }
 
     public void tirarCartaExtra() throws RemoteException{
         pilaDescarte.agregarCarta(jugadorActual.getMano().tirarCartaExtra());
         notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
-        notificarObservadores(Eventos.CAMBIA_MANO);
     }
     public void tirarCartaMano(int posCarta) throws RemoteException {
         pilaDescarte.agregarCarta(jugadorActual.getMano().cambiarCartaExtraPorCartaMano(posCarta));
         notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
-        notificarObservadores(Eventos.CAMBIA_MANO);
     }
 
     //MUEVE LAS CARTAS DE LA MANO PARA IR ACOMODANDO EL JUEGO
     @Override
     public void moverCartas(int carta1,int carta2) throws RemoteException {
-        jugadorActual.getMano().moverCartas(carta1,carta2);
+        if(carta1<8 && carta2<8) {
+            jugadorActual.getMano().moverCartas(carta1, carta2);
+        }
+        else{
+            if(carta1<8){
+                jugadorActual.getMano().moverCartaExtra(carta1);
+            }
+            else{
+                jugadorActual.getMano().moverCartaExtra(carta2);
+            }
+        }
         notificarObservadores(Eventos.CAMBIA_ORDEN_CARTAS);
     }
 
@@ -153,20 +162,29 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     // Y SE VUELVE A REPARTIR
     @Override
     public void otraRonda() throws RemoteException {
-        pilaDescarte.vaciarPila();
         for (Jugador jugador : jugadores) {
             jugador.getMano().vaciarMano();
+            jugador.getMano().getPrimerJuego().clear();
+            jugador.getMano().getSegundoJuego().clear();
             jugador.getMano().setCortaCon(null);
         }
+        sacarPerdedoresDelJuego();
+        pilaDescarte.vaciarPila();
+        pilaDescarte=new PilaDescarte();
+        mazo.vaciarPila();
         mazo=new Mazo();
-        if(cantidadDeRondas<jugadores.size()) {
-            jugadorActual = jugadores.get(cantidadDeRondas);
-        }
-        else{
-            jugadorActual=jugadores.get(0);
-        }
+        jugadorActual = jugadores.get(cantidadDeRondas%jugadores.size());
         repartir();
         notificarObservadores(Eventos.JUEGO_INICIADO);
+    }
+
+    public Jugador obtenerJugador(String nombre) throws RemoteException{
+        for(Jugador j: jugadores){
+            if(nombre.equals(j.getNombre())){
+                return j;
+            }
+        }
+        return null;
     }
 
     //OBTIENE EL VALOR DE CortaCon SI ES CHINCHON SETEA EL GANADOR Y EL ESTADO DEL JUGADOR QUE GANO,
@@ -177,37 +195,45 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     @Override
     public boolean cortar(int opcion) throws RemoteException {
         boolean corta=false;
-        Carta cartaExtra=jugadorActual.getMano().getCartaExtraTurno();
         if(opcion==8){
+            System.out.println("TIRA LA CARTA "+ jugadorActual.getMano().getCartaExtraTurno().getNumero() +" de "+ jugadorActual.getMano().getCartaExtraTurno().getPalo());
             tirarCartaExtra();
         }
         else{
+            System.out.println("TIRA LA CARTA "+jugadorActual.getMano().getCartas().get(opcion-1).getNumero()+ " de "+jugadorActual.getMano().getCartas().get(opcion-1).getPalo());
             tirarCartaMano(opcion-1);
         }
-        if(jugadorActual.getMano().puedeCortar()) {
+        if(validadorDeJuego.puedeCortar(jugadorActual.getMano())) {
             if (jugadorActual.getMano().getCortaCon() == CortaCon.CHINCHON) {
                 setGanador(jugadorActual);
                 jugadorActual.setEstado(EstadoJugador.GANADOR);
                 for (Jugador j : jugadores) {
-                    System.out.println("PUNTOS JUGADOR "+j.getNombre());
-                    j.sumarPuntos(j.getMano().calcularPuntos());
+                    j.sumarPuntos(validadorDeJuego.calcularPuntos(j.getMano()));
                 }
                 notificarObservadores(Eventos.FIN_DEL_JUEGO);
             } else {
                 if (jugadorActual.getMano().getCortaCon() == CortaCon.MENOS_DIEZ) {
                     jugadorActual.restarDiez();
-                    System.out.println("CORTO CON MENOS DIEZ");
                 }
                 cantidadDeRondas++;
-                for (Jugador j : jugadores) {
-                    System.out.println("PUNTOS JUGADOR "+j.getNombre());
-                    j.sumarPuntos(j.getMano().calcularPuntos());
-                }
                 int perdedores=0;
                 for (Jugador j : jugadores) {
+                    j.sumarPuntos(validadorDeJuego.calcularPuntos(j.getMano()));
                     if (!j.sigueJugando()) {
                         perdedores++;
                         j.setEstado(EstadoJugador.PERDEDOR);
+                    }
+                    System.out.println("MANO DE "+ j.getNombre());
+                    for(Carta c: j.getMano().getCartas()){
+                        System.out.println(c.getNumero()+ " de "+ c.getPalo());
+                    }
+                    System.out.println("PRIMER JUEGO");
+                    for(Carta c: j.getMano().getPrimerJuego()){
+                        System.out.println(c.getNumero()+ " de "+ c.getPalo());
+                    }
+                    System.out.println("SEGUNDO JUEGO");
+                    for(Carta c: j.getMano().getSegundoJuego()){
+                        System.out.println(c.getNumero()+ " de "+ c.getPalo());
                     }
                 }
                 if(perdedores==jugadores.size()-1) {
@@ -220,19 +246,7 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
                     notificarObservadores(Eventos.FIN_DEL_JUEGO);
                 }
                 else if(perdedores==jugadores.size()){
-                    Jugador menosPuntos=null;
-                    boolean primero=true;
-                    for(Jugador jugador: jugadores){
-                        if(primero){
-                            menosPuntos=jugador;
-                        }
-                        else{
-                            if(jugador.getPuntos()<menosPuntos.getPuntos()){
-                                menosPuntos=jugador;
-                            }
-                        }
-                    }
-                    setGanador(menosPuntos);
+                    //TODOS PIERDEN
                     notificarObservadores(Eventos.FIN_DEL_JUEGO);
                 }
                 else {
@@ -242,18 +256,19 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
             corta=true;
         }
         else{
-            if(opcion==8){
-                jugadorActual.getMano().setCartaExtraTurno(getPilaDescarte().darCarta());
-            }
-            else{
-                jugadorActual.getMano().getCartas().remove(cartaExtra);
-                jugadorActual.getMano().setCartaExtraTurno(cartaExtra);
-                jugadorActual.getMano().recibirCarta(getPilaDescarte().darCarta());
-            }
+            jugadorActual.getMano().setCartaExtraTurno(getPilaDescarte().darCarta());
+            System.out.println("DEVUELVE LA CARTA "+ jugadorActual.getMano().getCartaExtraTurno().getNumero()+ " de "+ jugadorActual.getMano().getCartaExtraTurno().getPalo());
             notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
-            notificarObservadores(Eventos.CAMBIA_MANO);
         }
         return corta;
+    }
+
+    public void sacarPerdedoresDelJuego() throws RemoteException{
+        for(Jugador j: jugadores){
+            if(!j.sigueJugando()){
+                jugadores.remove(j);
+            }
+        }
     }
 
 }

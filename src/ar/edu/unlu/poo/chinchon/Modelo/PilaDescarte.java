@@ -10,12 +10,13 @@ public class PilaDescarte extends PilaDeCartas{
     }
 
     private void setCartaTope() {
-        if (pilaDeCartas.size() > 0) {
+        if (pilaDeCartas.size() > 1) {
             this.cartaTope = pilaDeCartas.get(pilaDeCartas.size() - 1);
             pilaDeCartas.remove(cartaTope);
         }
         else{
             this.cartaTope=null;
+            pilaDeCartas.remove(cartaTope);
         }
     }
 

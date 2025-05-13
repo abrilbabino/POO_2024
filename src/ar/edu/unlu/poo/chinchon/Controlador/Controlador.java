@@ -84,31 +84,35 @@ public class Controlador implements IControladorRemoto {
         return mazo;
     }
 
-    public ArrayList<CartaMostrable> obtenerCartasMano(){
+
+    public ArrayList<CartaMostrable> obtenerCartasJugador(String nombre){
         ArrayList<CartaMostrable> mano=new ArrayList<>();
         try {
-            mano=new ArrayList<CartaMostrable>(modelo.getJugadorActual().getMano().getCartas());
+            mano=new ArrayList<CartaMostrable>(modelo.obtenerJugador(nombre).getMano().getCartas());
         }catch (RemoteException e){
             e.printStackTrace();
         }
         return mano;
     }
 
-
     public CartaMostrable obtenerCartaTope(){
         CartaMostrable cartaTope=null;
         try {
-            cartaTope=modelo.getPilaDescarte().getTope();
+            if(modelo.getPilaDescarte().getTope()!=null) {
+                cartaTope=modelo.getPilaDescarte().getTope();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         return cartaTope;
     }
 
-    public CartaMostrable obtenerCartaExtra(){
+    public CartaMostrable obtenerCartaExtra(String nombre){
         CartaMostrable cartaExtra=null;
         try {
-            cartaExtra=modelo.getJugadorActual().getMano().getCartaExtraTurno();
+            if(modelo.getJugadorActual().getMano().getCartaExtraTurno()!=null) {
+                cartaExtra=modelo.obtenerJugador(nombre).getMano().getCartaExtraTurno();
+            }
         }catch (RemoteException e){
             e.printStackTrace();
         }
@@ -244,33 +248,27 @@ public class Controlador implements IControladorRemoto {
         switch(evento) {
             case Eventos.FALTAN_JUGADORES:
                 if (faltanJugadores() != -1) {
-                    vista.mostrarMensaje("Faltan " + faltanJugadores() + " jugadores para iniciar la partida");
+                    vista.mostrarMensaje("FALTAN " + faltanJugadores() + " JUGADORES PARA INICIAR LA PARTIDA");
                 }
                 break;
             case Eventos.JUEGO_INICIADO:
                 vista.limpiarPantalla();
                 vista.mostrarPuntos(obtenerJugadores());
                 vista.mostrarMazo(obtenerMazo());
-                vista.mostrarMensaje("CARTA TOPE PILA DESCARTE");
-                vista.mostrarCarta(obtenerCartaTope());
+                vista.mostrarCartaTope(obtenerCartaTope());
+                vista.mostrarMano();
                 actualizarVistaTurno();
                 break;
             case Eventos.CAMBIA_TURNO:
                 actualizarVistaTurno();
                 break;
             case Eventos.CAMBIA_CARTA_TOPE:
-                vista.limpiarPantalla();
-                vista.mostrarMensaje("CARTA TOPE PILA DESCARTE");
-                if (obtenerCartaTope() != null) {
-                    vista.mostrarCarta(obtenerCartaTope());
-                }
+                vista.mostrarCartaTope(obtenerCartaTope());
+                vista.mostrarMano();
                 break;
             case Eventos.CAMBIA_ORDEN_CARTAS:
-                if(vista.isTurno()){
-                    vista.limpiarPantalla();
-                    vista.mostrarMensaje("CARTA TOPE PILA DESCARTE");
-                    vista.mostrarCarta(obtenerCartaTope());
-                    vista.mostrarMano(obtenerCartasMano());
+                if(vista.isTurno()) {
+                    vista.mostrarMano();
                 }
                 break;
             case Eventos.CAMBIA_MAZO:
@@ -281,13 +279,8 @@ public class Controlador implements IControladorRemoto {
 
             case Eventos.CAMBIA_MANO:
                 if(vista.isTurno()) {
-                    vista.limpiarPantalla();
-                    if (jugadorActual() != null && obtenerJugadorActual() != null && !obtenerCartasMano().isEmpty()) {
-                        vista.mostrarMano(obtenerCartasMano());
-                        if(obtenerCartaExtra()!=null) {
-                            vista.mostrarMensaje("CARTA LEVANTADA");
-                            vista.mostrarCarta(obtenerCartaExtra());
-                        }
+                    if (jugadorActual() != null && obtenerJugadorActual() != null) {
+                        vista.mostrarMano();
                     }
                 }
                 break;
@@ -295,7 +288,7 @@ public class Controlador implements IControladorRemoto {
             case Eventos.FIN_DEL_JUEGO:
                 if(getGanador()!=null) {
                     vista.mostrarPuntos(obtenerJugadores());
-                    vista.mostrarMensaje("GANADOR: JUGADOR " + getGanador());
+                    vista.verificarPerdedores();
                     vista.mostrarMensaje("JUEGO TERMINADO");
                 }
                 break;

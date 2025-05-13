@@ -1,4 +1,5 @@
-package ar.edu.unlu.poo.chinchon;
+package ar.edu.unlu.poo
+        .chinchon;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -11,7 +12,6 @@ import ar.edu.unlu.rmimvc.Util;
 import ar.edu.unlu.rmimvc.servidor.Servidor;
 
 public class AppServidor {
-
         public static void main(String[] args) {
             ArrayList<String> ips = Util.getIpDisponibles();
             String ip = (String) JOptionPane.showInputDialog(

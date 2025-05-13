@@ -10,7 +10,7 @@ public class Mano implements Serializable {
     private ArrayList<Carta> primerJuego = new ArrayList<>();
     private ArrayList<Carta> segundoJuego = new ArrayList<>();
     private CortaCon cortaCon=null;
-    private Carta cartaExtraTurno;
+    private Carta cartaExtraTurno=null;
 
     public CortaCon getCortaCon(){
         return this.cortaCon;
@@ -24,8 +24,24 @@ public class Mano implements Serializable {
         return this.mano;
     }
 
+    public void recibirCartas(ArrayList<Carta> cartas){
+        mano.addAll(cartas);
+    }
+
+    public void quitarCartas(ArrayList<Carta> cartas){
+        mano.removeAll(cartas);
+    }
+
     public Carta getCartaExtraTurno(){
         return cartaExtraTurno;
+    }
+
+    public ArrayList<Carta> getPrimerJuego(){
+        return primerJuego;
+    }
+
+    public ArrayList<Carta> getSegundoJuego(){
+        return segundoJuego;
     }
 
     public void setCartaExtraTurno(Carta c){
@@ -41,10 +57,20 @@ public class Mano implements Serializable {
         mano.set(p1-1,mano.get(p2-1));
         mano.set(p2-1,temp);
     }
-
+    public void moverCartaExtra(int p1){
+        Carta temp=mano.get(p1-1);
+        mano.set(p1-1,cartaExtraTurno);
+        setCartaExtraTurno(temp);
+    }
     public void vaciarMano(){
         mano.clear();
+    }
+
+    public void vaciarPrimerJuego(){
         primerJuego.clear();
+    }
+
+    public void vaciarSegundoJuego(){
         segundoJuego.clear();
     }
 
@@ -65,253 +91,13 @@ public class Mano implements Serializable {
         setCartaExtraTurno(null);
         return tirarCarta(c);
     }
-    private void sacarCartasJuego(){
-        if(tieneEscalera()){
-            if(!tieneNumerosIguales()){
-                tieneEscalera();
-            }
-            mano.removeAll(primerJuego);
-            mano.removeAll(segundoJuego);
-        }
-        else{
-            if(tieneNumerosIguales()){
-                if(!tieneEscalera()){
-                    tieneNumerosIguales();
-                }
-            }
-            mano.removeAll(primerJuego);
-            mano.removeAll(segundoJuego);
-        }
-    }
-    public int calcularPuntos(){
-        if(mano.size()>1) {
-            System.out.println("SACANDO CARTAS JUEGO");
-            sacarCartasJuego();
-        }
-        int suma=0;
-        for(Carta c: mano){
-            System.out.println("SUMA "+ c.getNumero());
-            suma+=c.getNumero();
-        }
-        System.out.println("SUMA TOTAL "+ suma);
-        return suma;
+
+    public void agregarPrimerJuego(ArrayList<Carta> primero){
+        primerJuego.addAll(primero);
     }
 
-    private void ordenarCartasPorValor() {
-        Collections.sort(mano, new Comparator<Carta>() {
-            @Override
-            public int compare(Carta o1, Carta o2) {
-                return o1.getNumero() - o2.getNumero();
-            }
-        });
+    public void agregarSegundoJuego(ArrayList<Carta> segundo){
+        segundoJuego.addAll(segundo);
     }
-    private void ordenarCartasPorPalo(){
-        Collections.sort(mano, new Comparator<Carta>() {
-            @Override
-            public int compare(Carta o1, Carta o2) {
-                return o1.getPalo().compareTo(o2.getPalo());
-            }
-        });
-    }
-
-    private boolean prueba1() {
-        if (tieneEscalera()) {
-            if (!tieneNumerosIguales()) {
-                if(tieneEscalera()){
-                    return true;
-                }
-            }
-            else{
-                return true;
-            }
-        } else if (tieneNumerosIguales()) {
-            if (!tieneEscalera()) {
-                if(tieneNumerosIguales()){
-                    return true;
-                }
-            }
-            else{
-                return true;
-            }
-        }
-        return false;
-    }
-    private boolean prueba2(){
-        if (tieneNumerosIguales()) {
-            if (!tieneEscalera()) {
-                if(tieneNumerosIguales()){
-                    return true;
-                }
-            }
-            else{
-                return true;
-            }
-        } else if (tieneEscalera()) {
-            if (!tieneNumerosIguales()) {
-                if(tieneEscalera()){
-                    return true;
-                }
-            }
-            else{
-                return true;
-            }
-        }
-        return false;
-    }
-    public boolean puedeCortar() {
-        if (tieneChinChon()) {
-            cortaCon = CortaCon.CHINCHON;
-        } else {
-            boolean primerPrueba = prueba1();
-            if (primerPrueba) {
-                if (primerJuego.size() == 3 && segundoJuego.size() == 4 || primerJuego.size() == 4 && segundoJuego.size() == 3) {
-                    cortaCon = CortaCon.MENOS_DIEZ;
-                } else if (primerJuego.size() == 3 && segundoJuego.size() == 3 && mano.get(0).getNumero() <= 7 || primerJuego.size() == 6 && mano.get(0).getNumero() <= 7 || segundoJuego.size() == 6 && mano.get(0).getNumero() <= 7) {
-                    cortaCon = CortaCon.SOBRA_CARTA;
-                }
-            } else {
-                mano.addAll(primerJuego);
-                mano.addAll(segundoJuego);
-                primerJuego.clear();
-                segundoJuego.clear();
-                boolean segundaPrueba = prueba2();
-                if (segundaPrueba) {
-                    if (primerJuego.size() == 3 && segundoJuego.size() == 4 || primerJuego.size() == 4 && segundoJuego.size() == 3) {
-                        cortaCon = CortaCon.MENOS_DIEZ;
-                    } else if (primerJuego.size() == 3 && segundoJuego.size() == 3 && mano.get(0).getNumero() <= 7 || primerJuego.size() == 6 && mano.get(0).getNumero() <= 7 || segundoJuego.size() == 6 && mano.get(0).getNumero() <= 7) {
-                        cortaCon = CortaCon.SOBRA_CARTA;
-                    }
-                } else {
-                    mano.addAll(primerJuego);
-                    mano.addAll(segundoJuego);
-                    primerJuego.clear();
-                    segundoJuego.clear();
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean tieneChinChon() {
-        this.ordenarCartasPorValor();
-        Carta c = mano.get(0);
-        for (int i = 1; i < mano.size(); i++) {
-            if (mano.get(i).getPalo() != c.getPalo() || mano.get(i).getNumero() != c.getNumero() + 1) {
-                return false;
-            }
-            c = mano.get(i);
-        }
-        mano.clear();
-        return true;
-    }
-
-    private boolean tieneEscalera() {
-        this.ordenarCartasPorValor();
-        this.ordenarCartasPorPalo();
-
-        ArrayList<Carta> probando = new ArrayList<>();
-        boolean primero = primerJuego.isEmpty();
-
-        for (int i = 0; i < mano.size(); i++) {
-            probando.clear();
-            probando.add(mano.get(i));
-
-            for (int j = i + 1; j < mano.size(); j++) {
-                if (mano.get(j).getNumero() == mano.get(j - 1).getNumero() + 1 && mano.get(j).getPalo() == mano.get(j - 1).getPalo()) {
-                    probando.add(mano.get(j));
-                } else {
-                    break;
-                }
-            }
-
-            if (primero) {
-                if (primerJuego.size() < probando.size()) {
-                    primerJuego.clear();
-                    primerJuego.addAll(probando);
-                }
-            } else {
-                if (segundoJuego.size() < probando.size()) {
-                    segundoJuego.clear();
-                    segundoJuego.addAll(probando);
-                }
-            }
-        }
-
-        if (primerJuego.size() < 3 && segundoJuego.size() < 3) {
-            primerJuego.clear();
-            segundoJuego.clear();
-            return false;
-        } else if (primero) {
-            if (primerJuego.size() < 3) {
-                primerJuego.clear();
-                return false;
-            }
-        } else {
-            if (segundoJuego.size() < 3) {
-                segundoJuego.clear();
-                return false;
-            }
-        }
-
-        if (primero) {
-            mano.removeAll(primerJuego);
-        } else {
-            mano.removeAll(segundoJuego);
-        }
-
-        return true;
-    }
-
-
-    private boolean tieneNumerosIguales() {
-        boolean primero = false;
-        if(primerJuego.size()==0){
-            primero=true;
-        }
-        ArrayList<Carta> probando = new ArrayList<>();
-        for (Carta carta : mano) {
-            probando.clear();
-            for (Carta c : mano) {
-                if (carta.getNumero() == c.getNumero()) {
-                    probando.add(c);
-                }
-            }
-            if (primero) {
-                if (primerJuego.size() < probando.size()) {
-                    primerJuego.removeAll(primerJuego);
-                    primerJuego.addAll(probando);
-                }
-            }else {
-                if (segundoJuego.size() < probando.size()) {
-                    segundoJuego.removeAll(segundoJuego);
-                    segundoJuego.addAll(probando);
-                }
-            }
-        }
-        if (primerJuego.size() < 3 && segundoJuego.size() < 3) {
-            primerJuego.clear();
-            segundoJuego.clear();
-            return false;
-        } else if (primero) {
-            if (primerJuego.size() < 3) {
-                primerJuego.clear();
-                return false;
-            }
-        } else if(!primero){
-            if (segundoJuego.size() < 3) {
-                segundoJuego.clear();
-                return false;
-            }
-        }
-        if(primero) {
-            mano.removeAll(primerJuego);
-        }
-        else{
-            mano.removeAll(segundoJuego);
-        }
-        return true;
-    }
-
 
 }

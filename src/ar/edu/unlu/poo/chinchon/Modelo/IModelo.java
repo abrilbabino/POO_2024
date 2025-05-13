@@ -45,4 +45,9 @@ public interface IModelo extends IObservableRemoto {
     public void otraRonda() throws RemoteException;
 
     public boolean cortar(int opcion) throws RemoteException;
+
+    public Jugador obtenerJugador(String nombre) throws RemoteException;
+
+    public void sacarPerdedoresDelJuego() throws RemoteException;
+
 }

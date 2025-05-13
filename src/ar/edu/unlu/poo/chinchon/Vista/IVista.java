@@ -7,16 +7,17 @@ import java.util.ArrayList;
 
 public interface IVista {
     public void mostrarMensaje(String mensaje);
-    public void mostrarCarta(CartaMostrable cartaMostrable);
+    public void mostrarCartaTope(CartaMostrable cartaMostrable);
     public void mostrarMazo(ArrayList<CartaMostrable> mazo);
     public void mostrarMenuPrincipal();
     public void mostrarMenuJugador();
     public void opcionesCartasTirar();
     public void opcionesCartasTirarOCortar();
     public void verificarTurno();
-    public void mostrarMano(ArrayList<CartaMostrable> mano);
     public void verificarPerdedores();
     public void mostrarPuntos(ArrayList<JugadorMostrable> jugador);
     public boolean isTurno();
     public void limpiarPantalla();
+    public void mostrarMano();
+    public void mostrarCartaExtra();
 }
