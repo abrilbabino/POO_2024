@@ -69,6 +69,4 @@ public class Jugador implements JugadorMostrable {
             return true;
         }
     }
-
-
 }
