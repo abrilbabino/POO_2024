@@ -133,7 +133,9 @@ public class VistaConsola extends JFrame implements  IVista {
         println("----------------------------------------------------------------------------------------");
         println(" 3- INICIAR PARTIDA");
         println("----------------------------------------------------------------------------------------");
-        println(" 4- SALIR");
+        println(" 4- VER RANKING");
+        println("----------------------------------------------------------------------------------------");
+        println(" 5- SALIR");
         println("----------------------------------------------------------------------------------------");
         print(" SELECCIONE UNA OPCION: ");
 
@@ -163,11 +165,14 @@ public class VistaConsola extends JFrame implements  IVista {
                 iniciarPartida();
                 break;
             case "4":
+                mostrarRanking();
+                break;
+            case "5":
                 System.exit(0);
                 break;
             default:
                 println("----------------------------------------------------------------------------------------");
-                println(" OPCION INVALIDA, ELIJA UNA OPCION VALIDA: ");
+                println("OPCION INVALIDA, ELIJA UNA OPCION VALIDA: ");
                 mostrarMenuPrincipal();
         }
     }
@@ -202,7 +207,7 @@ public class VistaConsola extends JFrame implements  IVista {
                 break;
             default:
                 println("----------------------------------------------------------------------------------------");
-                println("OPCION NO VALIDA, ELIJA OTRA:");
+                println(" OPCION NO VALIDA, ELIJA OTRA:");
                 mostrarMenuJugador();
         }
     }
@@ -229,14 +234,14 @@ public class VistaConsola extends JFrame implements  IVista {
                         mostrarMenuJugador();
                     } else {
                         println("----------------------------------------------------------------------------------------");
-                        println("POSCARTA FUERA DEL RANGO, DEBE SER UN NUMERO ENTRE [1-7]");
+                        println("              POSCARTA FUERA DEL RANGO, DEBE SER UN NUMERO ENTRE [1-7]");
                         println("----------------------------------------------------------------------------------------");
                         println("DEBE INGRESAR POS_CARTA_MOVER1-POS_CARTA_MOVER2: ");
                     }
                 }
                 else{
                     println("----------------------------------------------------------------------------------------");
-                    println("FORMATO INCORRECTO POS_CARTA DEBE SER UN NUMERO");
+                    println("                 FORMATO INCORRECTO POS_CARTA DEBE SER UN NUMERO");
                     println("----------------------------------------------------------------------------------------");
                     println("DEBE INGRESAR POS_CARTA_MOVER1-POS_CARTA_MOVER2: ");
                 }
@@ -272,7 +277,7 @@ public class VistaConsola extends JFrame implements  IVista {
                 break;
             default:
                 println("----------------------------------------------------------------------------------------");
-                println("OPCION INVALIDA");
+                println("                                  OPCION INVALIDA");
                 opcionesCartasTirarOCortar();
         }
     }
@@ -316,7 +321,7 @@ public class VistaConsola extends JFrame implements  IVista {
                 break;
             default:
                 println("----------------------------------------------------------------------------------------");
-                println("OPCION INVALIDA");
+                println("                                 OPCION INVALIDA");
                 opcionesCartasTirar();
 
         }
@@ -360,14 +365,14 @@ public class VistaConsola extends JFrame implements  IVista {
                 break;
             default:
                 println("----------------------------------------------------------------------------------------");
-                println("OPCION INVALIDA");
+                println("                                   OPCION INVALIDA");
                 opcionesCartasCortar();
         }
     }
 
     public void mostrarPuntos(ArrayList<JugadorMostrable> jugadores){
         println("----------------------------------------------------------------------------------------");
-        println("RONDA Nº "+ (controlador.obtenerCantidadDeRondas()+1));
+        println("                                  RONDA Nº "+ (controlador.obtenerCantidadDeRondas()+1));
         println("----------------------------------------------------------------------------------------");
         for (JugadorMostrable j:jugadores) {
             println("----------------------------------------------------------------------------------------");
@@ -574,6 +579,20 @@ public class VistaConsola extends JFrame implements  IVista {
             cartas.add(controlador.obtenerCartaExtra(nombreJugador));
             mostrarCartas(cartas);
         }
+    }
+
+    private void mostrarRanking(){
+        limpiarPantalla();
+        println("----------------------------------------------------------------------------------------");
+        println("                                   RANKING TOP 5");
+        println("----------------------------------------------------------------------------------------");
+        int i=1;
+        for (JugadorMostrable j : controlador.obtenerRanking().getRanking()) {
+            println(i+ " - "+j.getNombre()+ ": "+ j.getPuntos());
+            println("-------------------------------------------------------------------------------------");
+            i++;
+        }
+        mostrarMenuPrincipal();
     }
 
 }

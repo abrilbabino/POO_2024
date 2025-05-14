@@ -15,11 +15,20 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     private Jugador ganador;
     private Jugador jugadorActual;
     private ValidadorDeJuego validadorDeJuego=new ValidadorDeJuego();
+    private RankingPuntos ranking;
+
     public ChinChon() {
         jugadores = new ArrayList<>();
         mazo = new Mazo();
         pilaDescarte = new PilaDescarte();
         cantidadDeRondas=0;
+        Serializador serializador = new Serializador("RANKING.dat");
+
+        Object obj = serializador.readObject();
+        if (obj instanceof RankingPuntos) {
+            RankingPuntos.setInstance((RankingPuntos) obj);
+        }
+        ranking = RankingPuntos.getInstance();
     }
 
     @Override
@@ -55,6 +64,11 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     @Override
     public void setGanador(Jugador j) throws RemoteException{
         this.ganador=j;
+    }
+
+    @Override
+    public RankingPuntos getRanking() throws RemoteException {
+        return ranking;
     }
 
     @Override
@@ -210,6 +224,7 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
                 for (Jugador j : jugadores) {
                     j.sumarPuntos(validadorDeJuego.calcularPuntos(j.getMano()));
                 }
+                ranking.agregarEntrada(getGanador());
                 notificarObservadores(Eventos.FIN_DEL_JUEGO);
             } else {
                 if (jugadorActual.getMano().getCortaCon() == CortaCon.MENOS_DIEZ) {
@@ -243,6 +258,7 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
                             setGanador(j);
                         }
                     }
+                    ranking.agregarEntrada(getGanador());
                     notificarObservadores(Eventos.FIN_DEL_JUEGO);
                 }
                 else if(perdedores==jugadores.size()){
@@ -260,6 +276,8 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
             System.out.println("DEVUELVE LA CARTA "+ jugadorActual.getMano().getCartaExtraTurno().getNumero()+ " de "+ jugadorActual.getMano().getCartaExtraTurno().getPalo());
             notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
         }
+        Serializador serializador=new Serializador("RANKING.dat");
+        serializador.writeOneObject(ranking);
         return corta;
     }
 

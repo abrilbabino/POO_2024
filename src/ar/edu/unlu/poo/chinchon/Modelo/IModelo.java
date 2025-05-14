@@ -21,6 +21,8 @@ public interface IModelo extends IObservableRemoto {
 
     public void setGanador(Jugador j) throws RemoteException;
 
+    public RankingPuntos getRanking () throws RemoteException;
+
     public void agregarJugador(Jugador j) throws RemoteException;
 
     public void cambiarTurno() throws RemoteException;

@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import ar.edu.unlu.poo.chinchon.Modelo.Eventos;
+import ar.edu.unlu.poo.chinchon.Modelo.RankingMostrable;
 import ar.edu.unlu.poo.chinchon.Vista.JLabelFondoArrastable;
 import ar.edu.unlu.poo.chinchon.Controlador.*;
 import ar.edu.unlu.poo.chinchon.Modelo.CartaMostrable;
@@ -29,6 +30,7 @@ public class VistaGrafica implements IVista{
     private JButton salirButton;
     private JButton agregarJugadorButton;
     private JButton iniciarPartidaButton;
+    private JButton mostrarRankingButton;
     private JPanel panelPartida;
     private JLabel carta;
     private JButton mazoButton;
@@ -56,6 +58,8 @@ public class VistaGrafica implements IVista{
         agregarJugadorButton.setBounds(280, 200, 200, 30);
         listaDeJugadoresButton.setBounds(280, 250, 200, 30);
         iniciarPartidaButton.setBounds(280, 305, 200, 30);
+        mostrarRankingButton=new BotonFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\trofeo michi.png");
+        mostrarRankingButton.setBounds(20, 450, 100, 100);
         salirButton.setBounds(280, 360, 200, 30);
         ayudaButton.setBounds(730,520,50,20);
 
@@ -108,7 +112,7 @@ public class VistaGrafica implements IVista{
                 pantalla.setBounds(250,80,500,500);
                 pantalla.setFont(new Font("Courier New",Font.BOLD,20));
                 listaJugadoresFrame = new JFrame("LISTA JUGADORES");
-                setVolverButton(listaJugadoresFrame);
+                setVolverButton(listaJugadoresFrame,580,520);
                 panelListaJugadores.add(volverButton);
                 panelListaJugadores.add(pantalla);
                 mostrarListaJugadores();
@@ -144,13 +148,20 @@ public class VistaGrafica implements IVista{
                 }
             }
         });
+
+        mostrarRankingButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mostrarRanking();
+            }
+        });
         ayudaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 menuPrincipal.setVisible(false);
                 panelAyuda=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\Como_jugar.png");
                 ayudaFrame=new JFrame("AYUDA");
-                setVolverButton(ayudaFrame);
+                setVolverButton(ayudaFrame,580,520);
                 panelAyuda.add(volverButton);
                 ayudaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 ayudaFrame.setSize(800,600);
@@ -162,6 +173,7 @@ public class VistaGrafica implements IVista{
         panelPrincipal.add(agregarJugadorButton);
         panelPrincipal.add(listaDeJugadoresButton);
         panelPrincipal.add(iniciarPartidaButton);
+        panelPrincipal.add(mostrarRankingButton);
         panelPrincipal.add(salirButton);
         panelPrincipal.add(ayudaButton);
         menuPrincipal = new JFrame("MENU PRINCIPAL");
@@ -171,8 +183,8 @@ public class VistaGrafica implements IVista{
         menuPrincipal.setContentPane(panelPrincipal);
         mostrarMenuPrincipal();
     }
-    private void setVolverButton(JFrame frame){
-        volverButton.setBounds(580,520,200,30);
+    private void setVolverButton(JFrame frame,int x,int y){
+        volverButton.setBounds(x,y,200,30);
         volverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -610,4 +622,26 @@ public class VistaGrafica implements IVista{
         }
     }
 
+    private void mostrarRanking(){
+        menuPrincipal.setVisible(false);
+        JPanel panelRanking=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\Ranking.png");
+        JTextArea entradas=new JTextArea();
+        entradas.setOpaque(false);
+        entradas.setEditable(false);
+        entradas.setBounds(150,300,300,500);
+        entradas.setFont(new Font("Courier New",Font.BOLD,20));
+        JFrame rankingFrame = new JFrame("TOP 5");
+        setVolverButton(rankingFrame,380,720);
+        panelRanking.add(volverButton);
+        panelRanking.add(entradas);
+        RankingMostrable rankingMostrable=controlador.obtenerRanking();
+        for(JugadorMostrable j: rankingMostrable.getRanking()){
+            entradas.append(j.getNombre()+ " - "+ j.getPuntos()+ "\n\n");
+        }
+        rankingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        rankingFrame.setSize(600, 800);
+        rankingFrame.setLocationRelativeTo(null);
+        rankingFrame.setContentPane(panelRanking);
+        rankingFrame.setVisible(true);
+    }
 }

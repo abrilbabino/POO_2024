@@ -1,10 +1,11 @@
 package ar.edu.unlu.poo.chinchon.Modelo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class ValidadorDeJuego {
+public class ValidadorDeJuego implements Serializable{
 
     private ArrayList<Carta> juegoValido=new ArrayList<>();
 
@@ -91,9 +92,9 @@ public class ValidadorDeJuego {
         } else {
             boolean primerPrueba = prueba1(mano);
             if (primerPrueba) {
-                if (mano.getPrimerJuego().size() == 3 && mano.getSegundoJuego().size() == 4 || mano.getPrimerJuego().size() == 4 && mano.getSegundoJuego().size() == 3) {
+                if ((mano.getPrimerJuego().size() == 3 && mano.getSegundoJuego().size() == 4) || (mano.getPrimerJuego().size() == 4 && mano.getSegundoJuego().size() == 3)) {
                     mano.setCortaCon(CortaCon.MENOS_DIEZ);
-                } else if (mano.getPrimerJuego().size() == 3 && mano.getSegundoJuego().size() == 3 && mano.getCartas().get(0).getNumero() <= 7 || mano.getPrimerJuego().size() == 6 && mano.getCartas().get(0).getNumero() <= 7 || mano.getSegundoJuego().size() == 6 && mano.getCartas().get(0).getNumero() <= 7) {
+                } else if ((mano.getPrimerJuego().size() == 3 && mano.getSegundoJuego().size() == 3 &&  mano.getCartas().size()==1 && mano.getCartas().get(0).getNumero() <= 7) || (mano.getPrimerJuego().size() == 6 && mano.getCartas().size()==1 && mano.getCartas().get(0).getNumero() <= 7) || (mano.getSegundoJuego().size() == 6 && mano.getCartas().size()==1 && mano.getCartas().get(0).getNumero() <= 7)) {
                     mano.setCortaCon(CortaCon.SOBRA_CARTA);
                 } else {
                     mano.recibirCartas(mano.getPrimerJuego());
@@ -111,9 +112,9 @@ public class ValidadorDeJuego {
                 mano.vaciarSegundoJuego();
                 juegoValido.clear();
                 if(prueba2(mano)){
-                    if (mano.getPrimerJuego().size() == 3 && mano.getSegundoJuego().size() == 4 || mano.getPrimerJuego().size() == 4 && mano.getSegundoJuego().size() == 3) {
+                    if ((mano.getPrimerJuego().size() == 3 && mano.getSegundoJuego().size() == 4) || (mano.getPrimerJuego().size() == 4 && mano.getSegundoJuego().size() == 3)) {
                         mano.setCortaCon(CortaCon.MENOS_DIEZ);
-                    } else if (mano.getPrimerJuego().size() == 3 && mano.getSegundoJuego().size() == 3 && mano.getCartas().get(0).getNumero() <= 7 || mano.getPrimerJuego().size() == 6 && mano.getCartas().get(0).getNumero() <= 7 || mano.getSegundoJuego().size() == 6 && mano.getCartas().get(0).getNumero() <= 7) {
+                    } else if ((mano.getPrimerJuego().size() == 3 && mano.getSegundoJuego().size() == 3 && mano.getCartas().size()==1 && mano.getCartas().get(0).getNumero() <= 7) || (mano.getPrimerJuego().size() == 6 && mano.getCartas().size()==1 && mano.getCartas().get(0).getNumero() <= 7 )|| (mano.getSegundoJuego().size() == 6 && mano.getCartas().size()==1 && mano.getCartas().get(0).getNumero() <= 7)) {
                         mano.setCortaCon(CortaCon.SOBRA_CARTA);
                     } else {
                         mano.recibirCartas(mano.getPrimerJuego());

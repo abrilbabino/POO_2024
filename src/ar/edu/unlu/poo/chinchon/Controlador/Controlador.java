@@ -232,6 +232,16 @@ public class Controlador implements IControladorRemoto {
         return nombreGanador;
     }
 
+    public RankingMostrable obtenerRanking(){
+        RankingMostrable ranking=null;
+        try{
+            ranking=modelo.getRanking();
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+        return ranking;
+    }
+
     private void actualizarVistaTurno() {
         if(jugadorActual()!=null){
             vista.verificarTurno();
