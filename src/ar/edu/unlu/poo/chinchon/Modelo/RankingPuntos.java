@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class RankingPuntos implements RankingMostrable{
     private static RankingPuntos instancia;
     public ArrayList<Jugador> ranking;
+    private static final long serialVersionUID = 1L;
 
     private RankingPuntos(){
         this.ranking= new ArrayList<Jugador>();
@@ -21,10 +22,22 @@ public class RankingPuntos implements RankingMostrable{
         instancia=obj;
     }
 
+    @Override
+    public ArrayList<JugadorMostrable> getRanking() {
+        return new ArrayList<JugadorMostrable>(ranking);
+    }
+
+    //ORDENA EL RANKING DE MENOR A MAYOR, YA QUE UN MENOR PUNTAJE ES MEJOR
+    public void ordenarRanking() {
+        ranking.sort((a, b) -> Integer.compare(a.getPuntos(), b.getPuntos()));
+    }
+
+    //AGREGA UNA ENTRADA AL TOP 5 DEL RANKING Y MANTIENE SIEMPRE ORDENADAS LAS 5 PUNTUACIONES MAS ALTAS,
+    //SI VUELVE A GANAR UN JUGADOR QUE ESTA EN EL RANKING MANTIENE EN EL RANKING LA PUNTUACION MAS ALTA
     public void agregarEntrada(Jugador j){
         boolean repetido=false;
-        int menorPuntaje=100;
-        Jugador jugadorMenorPuntaje=null;
+        int mayorPuntaje=0;
+        Jugador jugadorMayorPuntaje=null;
         Jugador jugadorRepetido=null;
 
         for(Jugador jug: ranking){
@@ -32,38 +45,35 @@ public class RankingPuntos implements RankingMostrable{
                 repetido=true;
                 jugadorRepetido=jug;
             }
-            if(jug.getPuntos()<menorPuntaje){
-                menorPuntaje=jug.getPuntos();
-                jugadorMenorPuntaje=jug;
+            if(jugadorMayorPuntaje==null|| jug.getPuntos() > mayorPuntaje){
+                mayorPuntaje=jug.getPuntos();
+                jugadorMayorPuntaje=jug;
             }
         }
         if(ranking.size()<5) {
             if (!repetido) {
                 ranking.add(j);
-                ranking.sort((a, b) -> Integer.compare(b.getPuntos(), a.getPuntos()));
+                ordenarRanking();
             } else {
-                if (jugadorRepetido.getPuntos() < j.getPuntos()) {
+                if (jugadorRepetido.getPuntos() > j.getPuntos()) {
                     ranking.remove(jugadorRepetido);
                     ranking.add(j);
-                    ranking.sort((a, b) -> Integer.compare(b.getPuntos(), a.getPuntos()));
+                    ordenarRanking();
                 }
             }
         }
         else{
-            if(j.getPuntos()>jugadorMenorPuntaje.getPuntos() && !repetido){
-                ranking.remove(jugadorMenorPuntaje);
+            if(j.getPuntos()<jugadorMayorPuntaje.getPuntos() && !repetido){
+                ranking.remove(jugadorMayorPuntaje);
                 ranking.add(j);
-                ranking.sort((a, b) -> Integer.compare(b.getPuntos(), a.getPuntos()));
+                ordenarRanking();
             }
-            else if(repetido && j.getPuntos()>jugadorRepetido.getPuntos()){
+            else if(repetido && j.getPuntos()<jugadorRepetido.getPuntos()){
                 ranking.remove(jugadorRepetido);
                 ranking.add(j);
-                ranking.sort((a, b) -> Integer.compare(b.getPuntos(), a.getPuntos()));
+                ordenarRanking();
             }
         }
-    }
 
-    public ArrayList<Jugador> getRanking() {
-        return ranking;
     }
 }

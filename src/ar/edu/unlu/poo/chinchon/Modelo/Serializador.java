@@ -18,6 +18,7 @@ public class Serializador {
         }
     }
 
+    //PERMITE SERIALIZAR UN OBJETO PARA SU PERSISTENCIA
     public boolean writeOneObject(Object obj){
         boolean respuesta=false;
         try{
@@ -33,6 +34,7 @@ public class Serializador {
         return respuesta;
     }
 
+    //PERMITE RECUPERAR UN OBJETO SERIALIZADO
     public Object readObject(){
         Object respuesta=null;
         ArrayList<Object> listaDeObjetos=new ArrayList<Object>();

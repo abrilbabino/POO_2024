@@ -19,6 +19,7 @@ public class Controlador implements IControladorRemoto {
         this.vista=vista;
     }
 
+    //VERIFICA SI YA EXISTE UN JUGADOR CON ESE NOMBRE PARA VALIDAR QUE NO HAYA DOS CON EL MISMO NOMBRE
     public boolean existeJugador(String nombre){
         boolean existe=false;
         try {
@@ -34,6 +35,7 @@ public class Controlador implements IControladorRemoto {
         return existe;
     }
 
+    //CREA UN JUGADOR CON EL NOMBRE RECIBIDO Y LO AGREGA A LA LISTA DE JUGADORES
     public void agregarJugador(String nombre){
         try {
             Jugador j = new Jugador(nombre);
@@ -43,6 +45,7 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
+    //OBTIENE DE PARTE DEL MODELO LA LISTA DE JUGADORES Y RETORNA UNA LISTA DE JUGADORES MOSTRABLES
     public ArrayList<JugadorMostrable> obtenerJugadores(){
         ArrayList<JugadorMostrable> jugadores=new ArrayList<>();
         try{
@@ -53,6 +56,7 @@ public class Controlador implements IControladorRemoto {
         return jugadores;
     }
 
+    //VERIFICA QUE LA CANTIDAD DE JUGADORES SEA COMO MINIMO 2
     public int faltanJugadores(){
         int valor=-1;
         int cantidadJ = obtenerJugadores().size();
@@ -64,6 +68,7 @@ public class Controlador implements IControladorRemoto {
         return valor;
     }
 
+    //INICIA EL JUEGO
     public boolean iniciarJuego(){
         boolean inicia=false;
         try {
@@ -74,6 +79,7 @@ public class Controlador implements IControladorRemoto {
         return inicia;
     }
 
+    //OBTIENE DE PARTE DEL MODELO EL MAZO Y RETORNA UNA PILA DE CARTAS MOSTRABLES
     public  ArrayList<CartaMostrable> obtenerMazo(){
         ArrayList<CartaMostrable> mazo=new ArrayList<>();
         try {
@@ -84,7 +90,8 @@ public class Controlador implements IControladorRemoto {
         return mazo;
     }
 
-
+    //OBTIENE DE PARTE DEL MODELO LA MANO DEL JUGADOR CUYO NOMBRE COINCIDE CON EL RECIBIDO POR PARAMETRO
+    //DEVUELVE UN CONJUNTO DE CARTAS MOSTRABLES
     public ArrayList<CartaMostrable> obtenerCartasJugador(String nombre){
         ArrayList<CartaMostrable> mano=new ArrayList<>();
         try {
@@ -95,6 +102,7 @@ public class Controlador implements IControladorRemoto {
         return mano;
     }
 
+    //OBTIENE DE PARTE DEL MODELO LA CARTA DEL TOPE DE LA PILA DE DESCARTE Y DEVUELVE UNA CARTA MOSTRABLE
     public CartaMostrable obtenerCartaTope(){
         CartaMostrable cartaTope=null;
         try {
@@ -107,6 +115,8 @@ public class Controlador implements IControladorRemoto {
         return cartaTope;
     }
 
+    //OBTIENE DE PARTE DEL MODELO LA ULTIMA CARTA LEVANTADA POR EL JUGADOR CUYO NOMBRE COINCIDE CON EL
+    //RECIBIDO POR PARAMETRO, DEVUELVE UNA CARTA MOSTRABLE
     public CartaMostrable obtenerCartaExtra(String nombre){
         CartaMostrable cartaExtra=null;
         try {
@@ -119,6 +129,7 @@ public class Controlador implements IControladorRemoto {
         return cartaExtra;
     }
 
+    //OBTIENE DE PARTE DEL MODELO EL JUGADOR ACTUAL (QUE TIENE EL TURNO) Y DEVUELVE SU NOMBRE
     public String jugadorActual(){
         String nombre=null;
         try {
@@ -130,6 +141,7 @@ public class Controlador implements IControladorRemoto {
         return nombre;
     }
 
+    //INDICA QUE SE DEBE CAMBIAR EL TURNO YA QUE EL JUGADOR QUE TENIA EL TURNO YA JUGO
     public void cambiarTurno(){
         try {
             modelo.cambiarTurno();
@@ -138,6 +150,8 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
+    //INDICA QUE EL JUGADOR ACTUAL QUIERE AGARRAR UNA CARTA DEPENDIENDO DE LA OPCION RECIBIDA DEL MAZO
+    //O DEL TOPE DE LA PILA DE DESCARTE
     public void agarrarCarta(int opcion){
         try {
             if(opcion==1){
@@ -151,6 +165,7 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
+    //INDICA QUE EL JUGADOR ACTUAL QUIERE TIRAR UNA CARTA
     public void tirarCarta(int posicionCarta){
         try {
             if(posicionCarta<8){
@@ -165,6 +180,7 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
+    //INDICA QUE EL JUGADOR ACTUAL (QUE TIENE EL TURNO) DESEA MOVER SUS CARTAS PARA ACOMODARLAS EN LA MANO
     public void moverCartas(int pos1,int pos2){
         try {
             modelo.moverCartas(pos1, pos2);
@@ -173,6 +189,7 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
+    //INDICA EL COMIENZO DE UNA NUEVA RONDA
     public void reiniciaRonda(){
         try {
             modelo.otraRonda();
@@ -180,6 +197,9 @@ public class Controlador implements IControladorRemoto {
             e.printStackTrace();
         }
     }
+
+    //OBTIENE DE PARTE DEL MODELO LA LISTA DE PERDEDORES Y DEVUELVE UNA LISTA CON LOS NOMBRES
+    // DE LOS PERDEDORES
     public ArrayList<String> obtenerPerdedores(){
         ArrayList<String> perdedores=new ArrayList<>();
         for(JugadorMostrable j: obtenerJugadores()){
@@ -190,6 +210,9 @@ public class Controlador implements IControladorRemoto {
         }
         return perdedores;
     }
+
+    //INDICA QUE EL JUGADOR ACTUAL (QUE TIENE EL TURNO) QUIERE CORTAR, EN CASO DE QUE NO PUEDA LE PIDE
+    // A LA VISTA QUE LE INDIQUE AL JUGADOR QUE NO PUEDE CORTAR
     public void cortar(int opcion){
         try {
             if (!modelo.cortar(opcion)) {
@@ -202,16 +225,7 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
-    public Jugador obtenerJugadorActual(){
-        Jugador jugadorActual=null;
-        try{
-            jugadorActual=modelo.getJugadorActual();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return jugadorActual;
-    }
-
+    //OBTIENE DEL MODELO LA CANTIDAD DE RONDAS JUGADAS PARA SABER QUE NUMERO DE RONDA SE ESTA JUGANDO
     public int obtenerCantidadDeRondas(){
         int cantRondas=-1;
         try{
@@ -222,7 +236,8 @@ public class Controlador implements IControladorRemoto {
         return cantRondas;
     }
 
-    public String getGanador(){
+    //OBTIENE DEL MODELO EL JUGADOR QUE GANO LA PARTIDA Y DEVUELVE SU NOMBRE
+    public String obtenerGanador(){
         String nombreGanador=null;
         try {
             nombreGanador=modelo.getGanador().getNombre();
@@ -232,6 +247,7 @@ public class Controlador implements IControladorRemoto {
         return nombreGanador;
     }
 
+    //OBTIENE DEL MODELO EL RANKING DE LOS JUGADORES, DEVUELVE UN RANKING MOSTRABLE
     public RankingMostrable obtenerRanking(){
         RankingMostrable ranking=null;
         try{
@@ -242,6 +258,7 @@ public class Controlador implements IControladorRemoto {
         return ranking;
     }
 
+    //INDICA A LA VISTA QUE VERIFIQUE EL TURNO PARA ACTUALIZAR LA PANTALLA DE LOS JUGADORES
     private void actualizarVistaTurno() {
         if(jugadorActual()!=null){
             vista.verificarTurno();
@@ -253,6 +270,7 @@ public class Controlador implements IControladorRemoto {
         this.modelo = (IModelo) modeloRemoto;
     }
 
+    //MANEJA LOS EVENTOS
     @Override
     public void actualizar(IObservableRemoto modelo, Object evento) throws RemoteException {
         switch(evento) {
@@ -278,6 +296,7 @@ public class Controlador implements IControladorRemoto {
                 break;
             case Eventos.CAMBIA_ORDEN_CARTAS:
                 if(vista.isTurno()) {
+                    vista.mostrarCartaTope(obtenerCartaTope());
                     vista.mostrarMano();
                 }
                 break;
@@ -289,14 +308,14 @@ public class Controlador implements IControladorRemoto {
 
             case Eventos.CAMBIA_MANO:
                 if(vista.isTurno()) {
-                    if (jugadorActual() != null && obtenerJugadorActual() != null) {
+                    if (jugadorActual() != null) {
                         vista.mostrarMano();
                     }
                 }
                 break;
 
             case Eventos.FIN_DEL_JUEGO:
-                if(getGanador()!=null) {
+                if(obtenerGanador()!=null) {
                     vista.mostrarPuntos(obtenerJugadores());
                     vista.verificarPerdedores();
                     vista.mostrarMensaje("JUEGO TERMINADO");

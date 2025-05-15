@@ -31,7 +31,7 @@ public class VistaConsola extends JFrame implements  IVista {
         ingresaTexto.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                enterButton.doClick(); // Simula el clic en el botón
+                enterButton.doClick();
             }
         });
         enterButton.addActionListener(new ActionListener() {
@@ -44,6 +44,241 @@ public class VistaConsola extends JFrame implements  IVista {
         });
         mostrarMenuPrincipal();
     }
+
+    //MUESTRA EL MENU PRINCIPAL EN LA PANTALLA
+    @Override
+    public void mostrarMenuPrincipal() {
+        estadoVista = EstadoVista.MENU;
+        println("----------------------------------------------------------------------------------------");
+        println("                                    MENU PRINCIPAL");
+        println("----------------------------------------------------------------------------------------");
+        println("                                        OPCIONES");
+        println("----------------------------------------------------------------------------------------");
+        println(" 1- AGREGAR JUGADOR");
+        println("----------------------------------------------------------------------------------------");
+        println(" 2- MOSTRAR JUGADORES");
+        println("----------------------------------------------------------------------------------------");
+        println(" 3- INICIAR PARTIDA");
+        println("----------------------------------------------------------------------------------------");
+        println(" 4- VER RANKING");
+        println("----------------------------------------------------------------------------------------");
+        println(" 5- SALIR");
+        println("----------------------------------------------------------------------------------------");
+        print(" SELECCIONE UNA OPCION: ");
+
+    }
+
+    //MUESTRA EN LA PANTALLA EL MENU CON LAS OPCIONES DE LEVANTAR O ACOMODAR SUS CARTAS PARA EL JUGADOR
+    @Override
+    public void mostrarMenuJugador() {
+        estadoVista = EstadoVista.MENU_JUGADOR;
+        println("----------------------------------------------------------------------------------------");
+        println("                                    MENU JUGADOR");
+        println("----------------------------------------------------------------------------------------");
+        println(" 1-AGARRAR CARTA DEL MAZO");
+        println("----------------------------------------------------------------------------------------");
+        println(" 2-AGARRAR CARTA DEL TOPE DE LA PILA DE DESCARTE");
+        println("----------------------------------------------------------------------------------------");
+        println(" 3-MOVER CARTAS");
+        println("----------------------------------------------------------------------------------------");
+        print(" SELECCIONE UNA OPCION: ");
+    }
+
+    //MUESTRA EN LA PANTALLA LAS OPCIONES DE CARTAS PARA TIRAR
+    @Override
+    public void opcionesCartasTirar() {
+        estadoVista=EstadoVista.TIRAR_CARTA;
+        println("----------------------------------------------------------------------------------------");
+        println("                                 OPCIONES DE CARTAS PARA TIRAR");
+        println("----------------------------------------------------------------------------------------");
+        println("1-Primer Carta");
+        println("----------------------------------------------------------------------------------------");
+        println("2-Segunda Carta");
+        println("----------------------------------------------------------------------------------------");
+        println("3-Tercer Carta");
+        println("----------------------------------------------------------------------------------------");
+        println("4-Cuarta Carta");
+        println("----------------------------------------------------------------------------------------");
+        println("5-Quinta Carta");
+        println("----------------------------------------------------------------------------------------");
+        println("6-Sexta Carta");
+        println("----------------------------------------------------------------------------------------");
+        println("7-Septima Carta");
+        println("----------------------------------------------------------------------------------------");
+        println("8-Ultima Carta Levantada");
+        println("----------------------------------------------------------------------------------------");
+        print("Seleccione la carta a tirar: ");
+    }
+
+    //MUESTRA EN LA PANTALLA LA OPCION TIRAR O CORTAR
+    @Override
+    public void opcionesCartasTirarOCortar() {
+        estadoVista=EstadoVista.TIRAR_O_CORTAR;
+        println("----------------------------------------------------------------------------------------");
+        println("1- TIRAR CARTA");
+        println("----------------------------------------------------------------------------------------");
+        println("2- CORTAR");
+        println("----------------------------------------------------------------------------------------");
+        print("SELECCIONE UNA OPCION: ");
+    }
+
+    //MUESTRA UN MENSAJE POR PANTALLA
+    @Override
+    public void mostrarMensaje(String mensaje) {
+        int anchoTotal = 88;
+        int espaciosDisponibles = mensaje.length();
+        int espaciosIzquierda = (anchoTotal-espaciosDisponibles)/2;
+
+        if(mensaje.equals("JUEGO TERMINADO")) {
+            if(nombreJugador.equals(controlador.obtenerGanador())){
+                limpiarPantalla();
+                mostrarPuntos(controlador.obtenerJugadores());
+                println("----------------------------------------------------------------------------------------");
+                println("                                       GANASTE!! :)");
+                println("----------------------------------------------------------------------------------------");
+            }
+            println("----------------------------------------------------------------------------------------");
+            println(" ".repeat(espaciosIzquierda) +mensaje);
+            println("----------------------------------------------------------------------------------------");
+            println("                                   GRACIAS POR JUGAR");
+            println("----------------------------------------------------------------------------------------");
+            finalizar();
+        }
+        else{
+            println("----------------------------------------------------------------------------------------");
+            println(" ".repeat(espaciosIzquierda) +mensaje);
+            println("----------------------------------------------------------------------------------------");
+        }
+    }
+
+    //MUESTRA POR PANTALLA LA CARTA DEL TOPE DE LA PILA DE DESCARTE
+    @Override
+    public void mostrarCartaTope(CartaMostrable cartaMostrable) {
+        mostrarMensaje("CARTA TOPE PILA DESCARTE");
+        ArrayList<CartaMostrable> cartas= new ArrayList<>();
+        if(controlador.obtenerCartaTope()!=null) {
+            cartas.add(cartaMostrable);
+            mostrarCartas(cartas);
+        }
+        else{
+            mostrarMensaje("CARTA TOPE (VACIO)");
+        }
+    }
+
+    //MUESTRA POR PANTALLA EL MAZO DE CARTAS
+    @Override
+    public void mostrarMazo(ArrayList<CartaMostrable> mazo) {
+        println("MAZO");
+        String[] card = {
+                "┌─────┐",
+                "│     │",
+                "│     │",
+                "└─────┘"
+        };
+        if(mazo.size()>1) {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < card.length - 1; j++) {
+                    for (int k = 0; k < i; k++) {
+                        print(" ");
+                    }
+                    println(card[j]);
+                }
+            }
+
+            for (int i = 0; i < 2; i++) {
+                print(" ");
+            }
+            println(card[card.length - 1]);
+        }
+        else if(mazo.size()==1){
+            for(String linea:card){
+                println(linea);
+            }
+        }
+        else{
+            println("----------------------------------------------------------------------------------------");
+            println("                                         MAZO VACIO");
+            println("----------------------------------------------------------------------------------------");
+        }
+    }
+
+    //MUESTRA POR PANTALLA LA MANO DEL JUGADOR
+    @Override
+    public void mostrarMano() {
+        mostrarMensaje("MANO");
+        if(!controlador.obtenerCartasJugador(nombreJugador).isEmpty()) {
+            mostrarCartas(controlador.obtenerCartasJugador(nombreJugador));
+        }
+        mostrarCartaExtra();
+    }
+
+    //MUESTRA POR PANTALLA LA ULTIMA CARTA LEVANTADA POR EL JUGADOR
+    @Override
+    public void mostrarCartaExtra() {
+        if(controlador.obtenerCartaExtra(nombreJugador)!=null) {
+            mostrarMensaje("CARTA LEVANTADA");
+            ArrayList<CartaMostrable> cartas=new ArrayList<>();
+            cartas.add(controlador.obtenerCartaExtra(nombreJugador));
+            mostrarCartas(cartas);
+        }
+    }
+
+    //EVALUA SI ES EL TURNO DEL JUGADOR Y DEVUELVE EL RESULTADO
+    @Override
+    public boolean isTurno(){
+        return controlador.jugadorActual().equals(nombreJugador);
+    }
+
+    //VERIFICA SI ES EL TURNO DEL JUGADOR, SI ES EL TURNO MUESTRA EL MENU, CASO CONTRARIO SE DESHABILITAN
+    //LOS COMPONENTES DE LA PANTALLA PARA QUE EL JUGADOR ESPERE SU TURNO
+    @Override
+    public void verificarTurno(){
+        if(!isTurno()){
+            esperarTurno();
+        }
+        else{
+            esTurno();
+            mostrarMenuJugador();
+        }
+    }
+
+    //MUESTRA POR PANTALLA LOS PUNTOS DE CADA JUGADOR
+    @Override
+    public void mostrarPuntos(ArrayList<JugadorMostrable> jugadores){
+        println("----------------------------------------------------------------------------------------");
+        println("                                  RONDA Nº "+ (controlador.obtenerCantidadDeRondas()+1));
+        println("----------------------------------------------------------------------------------------");
+        for (JugadorMostrable j:jugadores) {
+            println("----------------------------------------------------------------------------------------");
+            println("Jugador "+j.getNombre()+": "+ j.getPuntos());
+            println("----------------------------------------------------------------------------------------");
+        }
+    }
+
+    //VERIFICA SI EL JUGADOR PERDIO Y EN ESE CASO SE LE MUESTRA SU CONDICION, LOS PUNTOS Y SE DESHABILITAN
+    //LOS COMPONENTES DE LA PANTALLA
+    @Override
+    public void verificarPerdedores() {
+        ArrayList<String> perdedores=controlador.obtenerPerdedores();
+        for(String nombre: perdedores){
+            if(nombre.equals(nombreJugador)){
+                limpiarPantalla();
+                mostrarPuntos(controlador.obtenerJugadores());
+                println("----------------------------------------------------------------------------------------");
+                println("                                      PERDISTE :( ");
+                println("----------------------------------------------------------------------------------------");
+                finalizar();
+            }
+        }
+    }
+
+    //DEJA EN BLANCO LA PANTALLA
+    @Override
+    public void limpiarPantalla() {
+        saleTexto.setText("");
+    }
+
+    //MANEJA LOS INGRESOS DEPENDIENDO DEL ESTADO DE LA VISTA
     private void procesarEntrada(String entrada) {
         switch (estadoVista) {
             case MENU:
@@ -71,14 +306,18 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
+    //AGREGA UN TEXTO A LA PANTALLA
     private void print(String texto) {
         saleTexto.append(texto);
     }
 
+    //AGREGA UN TEXTO CON SALTO DE LINEA A LA PANTALLA
     private void println(String texto) {
         print(texto + "\n");
     }
 
+    //VALIDA LA ENTRADA DE NOMBRE JUGADOR Y SI ES CORRECTA SE AGREGA AL JUEGO, CASO CONTRARIO MUESTRA
+    // EL ERROR
     private void agregarJugador() {
         if (!ingresaTexto.getText().equals("")) {
             nombreJugador = ingresaTexto.getText();
@@ -95,6 +334,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
+    //MUESTRA POR PANTALLA LA LISTA DE JUGADORES EN JUEGO
     private void mostrarJugadores() {
         if(controlador.obtenerJugadores().size()==0){
             println("-------------------------------------------------------------------------------------");
@@ -112,6 +352,7 @@ public class VistaConsola extends JFrame implements  IVista {
         mostrarMenuPrincipal();
     }
 
+    //INDICA QUE EL JUGADOR DESEA INICIAR EL JUEGO
     private void iniciarPartida() {
         boolean inicia = controlador.iniciarJuego();
         if (!inicia) {
@@ -119,28 +360,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
-    @Override
-    public void mostrarMenuPrincipal() {
-        estadoVista = EstadoVista.MENU;
-        println("----------------------------------------------------------------------------------------");
-        println("                                    MENU PRINCIPAL");
-        println("----------------------------------------------------------------------------------------");
-        println("                                        OPCIONES");
-        println("----------------------------------------------------------------------------------------");
-        println(" 1- AGREGAR JUGADOR");
-        println("----------------------------------------------------------------------------------------");
-        println(" 2- MOSTRAR JUGADORES");
-        println("----------------------------------------------------------------------------------------");
-        println(" 3- INICIAR PARTIDA");
-        println("----------------------------------------------------------------------------------------");
-        println(" 4- VER RANKING");
-        println("----------------------------------------------------------------------------------------");
-        println(" 5- SALIR");
-        println("----------------------------------------------------------------------------------------");
-        print(" SELECCIONE UNA OPCION: ");
-
-    }
-
+    //MANEJA LOS INGRESOS DEL MENU PRINCIPAL
     private void procesarEntradaMenu(String entrada) {
         switch (entrada) {
             case "1":
@@ -177,22 +397,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
-    @Override
-    public void mostrarMenuJugador() {
-        estadoVista = EstadoVista.MENU_JUGADOR;
-        println("----------------------------------------------------------------------------------------");
-        println("                                    MENU JUGADOR");
-        println("----------------------------------------------------------------------------------------");
-        println(" 1-AGARRAR CARTA DEL MAZO");
-        println("----------------------------------------------------------------------------------------");
-        println(" 2-AGARRAR CARTA DEL TOPE DE LA PILA DE DESCARTE");
-        println("----------------------------------------------------------------------------------------");
-        println(" 3-MOVER CARTAS");
-        println("----------------------------------------------------------------------------------------");
-        print(" SELECCIONE UNA OPCION: ");
-    }
-
-
+    //MANEJA LOS INGRESOS DEL MENU JUGADOR
     private void procesarEntradaJugador(String entrada) {
         switch (entrada) {
             case "1":
@@ -212,6 +417,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
+    //SIRVE PARA VALIDAR SI UNA ENTRADA ES UN NUMERO
     private boolean esNumero(String str) {
         try {
             Integer.parseInt(str);
@@ -221,6 +427,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
+    //MANEJA LOS INGRESOS CUANDO SE DESEAN MOVER LAS CARTAS
     private void procesarCartasAMover(String entrada){
         if(entrada.length()==3) {
             if(entrada.substring(1,2).equals("-")) {
@@ -257,16 +464,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
-    public void opcionesCartasTirarOCortar() {
-        estadoVista=EstadoVista.TIRAR_O_CORTAR;
-        println("----------------------------------------------------------------------------------------");
-        println("1- TIRAR CARTA");
-        println("----------------------------------------------------------------------------------------");
-        println("2- CORTAR");
-        println("----------------------------------------------------------------------------------------");
-        print("SELECCIONE UNA OPCION: ");
-    }
-
+    //MANEJA LOS INGRESOS DEL MENU OPCIONESTIRAR O CORTAR
     private void procesarEntradaTirarOCortar(String entrada) {
         switch(entrada){
             case "1":
@@ -282,31 +480,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
-    @Override
-    public void opcionesCartasTirar() {
-        estadoVista=EstadoVista.TIRAR_CARTA;
-        println("----------------------------------------------------------------------------------------");
-        println("                                 OPCIONES DE CARTAS PARA TIRAR");
-        println("----------------------------------------------------------------------------------------");
-        println("1-Primer Carta");
-        println("----------------------------------------------------------------------------------------");
-        println("2-Segunda Carta");
-        println("----------------------------------------------------------------------------------------");
-        println("3-Tercer Carta");
-        println("----------------------------------------------------------------------------------------");
-        println("4-Cuarta Carta");
-        println("----------------------------------------------------------------------------------------");
-        println("5-Quinta Carta");
-        println("----------------------------------------------------------------------------------------");
-        println("6-Sexta Carta");
-        println("----------------------------------------------------------------------------------------");
-        println("7-Septima Carta");
-        println("----------------------------------------------------------------------------------------");
-        println("8-Ultima Carta Levantada");
-        println("----------------------------------------------------------------------------------------");
-        print("Seleccione la carta a tirar: ");
-    }
-
+    //MANEJA LOS INGRESOS CUANDO SE ELIJE LA OPCION TIRAR
     private void tirarCarta(String entrada) {
         switch (entrada) {
             case "1":
@@ -327,6 +501,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
+    //MUESTRA POR PANTALLA LAS OPCIONES DE CARTAS PARA CORTAR
     public void opcionesCartasCortar(){
         estadoVista= EstadoVista.CORTAR;
         println("----------------------------------------------------------------------------------------");
@@ -351,6 +526,7 @@ public class VistaConsola extends JFrame implements  IVista {
         print("Seleccione la carta para cortar: ");
     }
 
+    //MANEJA LOS INGRESOS DEL MENU OPCIONESCARTASCORTAR
     private void procesarEntradaCortar(String entrada) {
         switch (entrada){
             case "1":
@@ -370,31 +546,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
-    public void mostrarPuntos(ArrayList<JugadorMostrable> jugadores){
-        println("----------------------------------------------------------------------------------------");
-        println("                                  RONDA Nº "+ (controlador.obtenerCantidadDeRondas()+1));
-        println("----------------------------------------------------------------------------------------");
-        for (JugadorMostrable j:jugadores) {
-            println("----------------------------------------------------------------------------------------");
-            println("Jugador "+j.getNombre()+": "+ j.getPuntos());
-            println("----------------------------------------------------------------------------------------");
-        }
-    }
-
-    public void verificarPerdedores() {
-        ArrayList<String> perdedores=controlador.obtenerPerdedores();
-        for(String nombre: perdedores){
-            if(nombre.equals(nombreJugador)){
-                limpiarPantalla();
-                mostrarPuntos(controlador.obtenerJugadores());
-                println("----------------------------------------------------------------------------------------");
-                println("                                      PERDISTE :( ");
-                println("----------------------------------------------------------------------------------------");
-                finalizar();
-            }
-        }
-    }
-
+    //DESHABILITA LOS COMPONENTES DE LA PANTALLA Y MUESTRA UN MENSAJE DICIENDO DE QUIEN ES EL TURNO
     private void esperarTurno(){
         mostrarMensaje("TURNO DEL JUGADOR: "+ controlador.jugadorActual());
         mostrarMensaje("ESPERANDO...");
@@ -404,6 +556,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
+    //HABILITA LS COMPONENTES DE LA PANTALLA Y MUESTRA UN MENSAJE QUE INDICA QUE ES EL TURNO DEL JUGADOR
     private void esTurno(){
         println("----------------------------------------------------------------------------------------");
         println(" ES TU TURNO "+ controlador.jugadorActual());
@@ -414,24 +567,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
-    public boolean isTurno(){
-        boolean es=false;
-        if(controlador.jugadorActual().equals(nombreJugador)){
-            es=true;
-        }
-        return es;
-    }
-
-    public void verificarTurno(){
-        if(!controlador.jugadorActual().equals(nombreJugador)){
-            esperarTurno();
-        }
-        else{
-            esTurno();
-            mostrarMenuJugador();
-        }
-    }
-
+    //EL JUEGO TERMINA Y SE DESHABILITAN LOS COMPONENTES
     private void finalizar() {
         Component[] components = panelPrincipal.getComponents();
         for (Component component : components) {
@@ -439,46 +575,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
-    @Override
-    public void mostrarMensaje(String mensaje) {
-        int anchoTotal = 88;
-        int espaciosDisponibles = mensaje.length();
-        int espaciosIzquierda = (anchoTotal-espaciosDisponibles)/2;
-
-        if(mensaje.equals("JUEGO TERMINADO")) {
-            if(nombreJugador.equals(controlador.getGanador())){
-                limpiarPantalla();
-                println("----------------------------------------------------------------------------------------");
-                println("                                       GANASTE!! :)");
-                println("----------------------------------------------------------------------------------------");
-            }
-            println("----------------------------------------------------------------------------------------");
-            println(" ".repeat(espaciosIzquierda) +mensaje);
-            println("----------------------------------------------------------------------------------------");
-            println("                                   GRACIAS POR JUGAR");
-            println("----------------------------------------------------------------------------------------");
-            finalizar();
-        }
-        else{
-            println("----------------------------------------------------------------------------------------");
-            println(" ".repeat(espaciosIzquierda) +mensaje);
-            println("----------------------------------------------------------------------------------------");
-        }
-    }
-
-    @Override
-    public void mostrarCartaTope(CartaMostrable cartaMostrable) {
-        mostrarMensaje("CARTA TOPE PILA DESCARTE");
-        ArrayList<CartaMostrable> cartas= new ArrayList<>();
-        if(controlador.obtenerCartaTope()!=null) {
-            cartas.add(cartaMostrable);
-            mostrarCartas(cartas);
-        }
-        else{
-            mostrarMensaje("CARTA TOPE (VACIO)");
-        }
-    }
-
+    //MUESTRA POR PANTALLA EL CONJUNTO DE CARTAS RECIBIDO
     public void mostrarCartas(ArrayList<CartaMostrable> cartas) {
         ArrayList<String[]> cartasRenderizadas = new ArrayList<>();
         int anchoCarta = 11;
@@ -519,68 +616,7 @@ public class VistaConsola extends JFrame implements  IVista {
         }
     }
 
-
-
-    @Override
-    public void mostrarMazo(ArrayList<CartaMostrable> mazo) {
-        println("MAZO");
-        String[] card = {
-                "┌─────┐",
-                "│     │",
-                "│     │",
-                "└─────┘"
-        };
-        if(mazo.size()>1) {
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < card.length - 1; j++) {
-                    for (int k = 0; k < i; k++) {
-                        print(" ");
-                    }
-                    println(card[j]);
-                }
-            }
-
-            for (int i = 0; i < 2; i++) {
-                print(" ");
-            }
-            println(card[card.length - 1]);
-        }
-        else if(mazo.size()==1){
-            for(String linea:card){
-                println(linea);
-            }
-        }
-        else{
-            println("----------------------------------------------------------------------------------------");
-            println("                                         MAZO VACIO");
-            println("----------------------------------------------------------------------------------------");
-        }
-    }
-
-    @Override
-    public void limpiarPantalla() {
-        saleTexto.setText("");
-    }
-
-    @Override
-    public void mostrarMano() {
-        mostrarMensaje("MANO");
-        if(!controlador.obtenerCartasJugador(nombreJugador).isEmpty()) {
-            mostrarCartas(controlador.obtenerCartasJugador(nombreJugador));
-        }
-        mostrarCartaExtra();
-    }
-
-    @Override
-    public void mostrarCartaExtra() {
-        if(controlador.obtenerCartaExtra(nombreJugador)!=null) {
-            mostrarMensaje("CARTA LEVANTADA");
-            ArrayList<CartaMostrable> cartas=new ArrayList<>();
-            cartas.add(controlador.obtenerCartaExtra(nombreJugador));
-            mostrarCartas(cartas);
-        }
-    }
-
+    //MUESTRA POR PANTALLA EL RANKING DE LOS MEJORES 5 PUNTAJES
     private void mostrarRanking(){
         limpiarPantalla();
         println("----------------------------------------------------------------------------------------");
@@ -594,6 +630,5 @@ public class VistaConsola extends JFrame implements  IVista {
         }
         mostrarMenuPrincipal();
     }
-
 }
 

@@ -9,6 +9,7 @@ public class Jugador implements JugadorMostrable {
     private int puntos;
     private boolean turno;
     private EstadoJugador estado;
+    private static final long serialVersionUID = 1L;
 
     public Jugador(String nombre){
         this.nombre=nombre;
@@ -41,14 +42,6 @@ public class Jugador implements JugadorMostrable {
         this.estado=estado;
     }
 
-    public void sacarCartaDelMazo(Mazo m){
-        this.getMano().setCartaExtraTurno(m.darCarta());
-    }
-
-    public void sacarCartaDeLaPiLaDescarte(PilaDescarte p){
-        this.getMano().setCartaExtraTurno(p.darCarta());
-    }
-
     public int getPuntos() {
         return this.puntos;
     }
@@ -61,6 +54,18 @@ public class Jugador implements JugadorMostrable {
         this.puntos-=10;
     }
 
+    //LEVANTA UNA CARTA DEL MAZO Y LA AGREGA A LA MANO DEL JUGADOR COMO LA ULTIMA CARTA LEVANTADA
+    public void sacarCartaDelMazo(Mazo m){
+        this.getMano().setCartaExtraTurno(m.darCarta());
+    }
+
+    //LEVANTA LA CARTA TOPE DE LA PILA DESCARTA Y LA AGREGA A LA MANO DEL JUGADOR COMO LA ULTIMA
+    // CARTA LEVANTADA
+    public void sacarCartaDeLaPiLaDescarte(PilaDescarte p){
+        this.getMano().setCartaExtraTurno(p.darCarta());
+    }
+
+    //PERMITE EVALUAR SI UN JUGADOR PUEDE SEGUIR JUGANDO O SI EXCEDE LOS 100 PUNTOS Y EN ESE CASO PIERDE
     public boolean sigueJugando(){
         if(this.puntos>100){
             return false;

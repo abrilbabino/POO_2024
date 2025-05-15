@@ -11,6 +11,7 @@ public class Mazo extends PilaDeCartas {
         crearBaraja();
     }
 
+    //CREA UNA BARAJA DE 48 CARTAS ESPAÑOLAS Y LAS MEZCLA
     private void crearBaraja() {
         Carta carta;
         for (Palo p : Palo.values()) {
@@ -22,6 +23,7 @@ public class Mazo extends PilaDeCartas {
         super.barajar();
     }
 
+    //PERMITE DETERMINAR SI EL MAZO TIENE CARTAS O NO
     public boolean isVacio(){
         if(pilaDeCartas.size()==0){
             return true;
@@ -31,6 +33,7 @@ public class Mazo extends PilaDeCartas {
         }
     }
 
+    //PERMITE LEVANTAR UNA CARTA DEL MAZO, VA A LEVANTAR LA CARTA QUE ESTE MAS ARRIBA
     @Override
     public Carta darCarta() {
         Carta carta = null;
@@ -42,6 +45,7 @@ public class Mazo extends PilaDeCartas {
         return carta;
     }
 
+    //PERMITE AGREGAR UNA CARTA AL MAZO
     @Override
     public void agregarCarta(Carta c) {
         pilaDeCartas.add(c);

@@ -15,14 +15,18 @@ public abstract class PilaDeCartas implements Serializable {
         this.pilaDeCartas=pilaDeCartas;
     }
 
+    //PERMITE TOMAR UNA CARTA DE LA PILA
     public abstract Carta darCarta();
 
+    //PERMITE AGREGAR UNA CARTA A LA PILA
     public abstract void agregarCarta(Carta c);
 
+    //PERMITE DEJAR LA PILA VACIA (SIN CARTAS)
     public void vaciarPila(){
         this.pilaDeCartas.clear();
     }
 
+    //MEZCLA LAS CARTAS DE LA PILA
     public void barajar() {
         Collections.shuffle(pilaDeCartas);
     }

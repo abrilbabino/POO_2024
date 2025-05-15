@@ -3,10 +3,7 @@ package ar.edu.unlu.poo.chinchon.Vista;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 import ar.edu.unlu.poo.chinchon.Modelo.Eventos;
@@ -58,8 +55,12 @@ public class VistaGrafica implements IVista{
         agregarJugadorButton.setBounds(280, 200, 200, 30);
         listaDeJugadoresButton.setBounds(280, 250, 200, 30);
         iniciarPartidaButton.setBounds(280, 305, 200, 30);
-        mostrarRankingButton=new BotonFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\trofeo michi.png");
+        mostrarRankingButton=new BotonFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\mostrarRanking.png");
         mostrarRankingButton.setBounds(20, 450, 100, 100);
+        mostrarRankingButton.setBorderPainted(false);
+        mostrarRankingButton.setContentAreaFilled(false);
+        mostrarRankingButton.setFocusPainted(false);
+        mostrarRankingButton.setOpaque(false);
         salirButton.setBounds(280, 360, 200, 30);
         ayudaButton.setBounds(730,520,50,20);
 
@@ -95,7 +96,7 @@ public class VistaGrafica implements IVista{
                 agregarJugadorFrame = new JFrame("AGREGAR JUGADOR");
                 agregarJugadorFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 agregarJugadorFrame.setSize(800, 600);
-                agregarJugadorFrame.setLocationRelativeTo(null);
+                agregarJugadorFrame.setLocation(menuPrincipal.getLocation());
                 agregarJugadorFrame.setContentPane(panelAgregarJugador);
                 agregarJugadorFrame.setVisible(true);
             }
@@ -118,7 +119,7 @@ public class VistaGrafica implements IVista{
                 mostrarListaJugadores();
                 listaJugadoresFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 listaJugadoresFrame.setSize(800, 600);
-                listaJugadoresFrame.setLocationRelativeTo(null);
+                listaJugadoresFrame.setLocation(menuPrincipal.getLocation());
                 listaJugadoresFrame.setContentPane(panelListaJugadores);
                 listaJugadoresFrame.setVisible(true);
 
@@ -142,7 +143,7 @@ public class VistaGrafica implements IVista{
                         }
                     });
                     warningNoJugadoresSuf.add(cerrar, BorderLayout.SOUTH);
-                    warningNoJugadoresSuf.setLocationRelativeTo(agregarJugadorFrame);
+                    warningNoJugadoresSuf.setLocation(menuPrincipal.getLocation());
                     warningNoJugadoresSuf.pack();
                     warningNoJugadoresSuf.setVisible(true);
                 }
@@ -165,7 +166,7 @@ public class VistaGrafica implements IVista{
                 panelAyuda.add(volverButton);
                 ayudaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 ayudaFrame.setSize(800,600);
-                ayudaFrame.setLocationRelativeTo(null);
+                ayudaFrame.setLocation(menuPrincipal.getLocation());
                 ayudaFrame.setContentPane(panelAyuda);
                 ayudaFrame.setVisible(true);
             }
@@ -183,20 +184,9 @@ public class VistaGrafica implements IVista{
         menuPrincipal.setContentPane(panelPrincipal);
         mostrarMenuPrincipal();
     }
-    private void setVolverButton(JFrame frame,int x,int y){
-        volverButton.setBounds(x,y,200,30);
-        volverButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.setVisible(false);
-                mostrarMenuPrincipal();
-            }
-        });
-    }
-    private void createUIComponents() {
-        panelPrincipal=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\Menu_principal.png");
-    }
 
+    //SIRVE EN DOS CASOS, CUANDO NO PUEDE CORTAR INFORMA POR PANTALLA, Y CUANDO EL JUEGO TERMINA MUESTRA
+    // EL CARTEL DEL GANADOR
     @Override
     public void mostrarMensaje(String mensaje) {
         if(mensaje.equals("TODAVIA NO PODES CORTAR")){
@@ -221,13 +211,13 @@ public class VistaGrafica implements IVista{
             warningNoCorta.setVisible(true);
         }
         else if(mensaje.equals("JUEGO TERMINADO")){
-            if(nombreJugador.equals(controlador.getGanador())){
+            if(nombreJugador.equals(controlador.obtenerGanador())){
                 mostrarCartelGanador();
-                mostrarPuntos(controlador.obtenerJugadores());
             }
         }
     }
 
+    //MUESTRA POR PANTALLA LA CARTA DEL TOPE DE LA PILA DESCARTE
     @Override
     public void mostrarCartaTope(CartaMostrable cartaMostrable) {
         Component[] componentes = panelPartida.getComponents();
@@ -238,7 +228,7 @@ public class VistaGrafica implements IVista{
         }
         if(controlador.obtenerCartaTope()!=null) {
             topeButton=new BotonFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\"+cartaMostrable.getPalo()+cartaMostrable.getNumero()+".png");
-            topeButton.setBounds(410, 218, 188, 270);
+            topeButton.setBounds(250, 160, 115, 202);
             topeButton.setName("TOPE");
             topeButton.addActionListener(new ActionListener() {
                 @Override
@@ -252,10 +242,10 @@ public class VistaGrafica implements IVista{
         }
         else{
             topeButton=new BotonFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\topeVacio.png");
-            topeButton.setBounds(410, 218, 188, 270);
+            topeButton.setBounds(250, 160, 115, 202);
             topeButton.setName("TOPE");
         }
-        if(!tiro){
+        if(!tiro && levanto){
             topeButton.setEnabled(false);
         }
         panelPartida.add(topeButton);
@@ -263,74 +253,7 @@ public class VistaGrafica implements IVista{
         panelPartida.repaint();
     }
 
-    public void mostrarCartas(ArrayList<CartaMostrable> cartasMostrable) {
-        Component[] componentes = panelPartida.getComponents();
-        for (Component comp : componentes) {
-            if ("CARTA".equals(comp.getName())) {
-                panelPartida.remove(comp);
-            }
-        }
-        panelPartida.revalidate();
-        panelPartida.repaint();
-        int i=0;
-        for(CartaMostrable c: cartasMostrable){
-            carta=new JLabelFondoArrastable("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\"+c.getPalo()+c.getNumero()+".png");
-            carta.setEnabled(true);
-            setRealeseCarta();
-            carta.setBounds((160*i)+5,520,158,220);
-            carta.setName("CARTA");
-            ((JLabelFondoArrastable)carta).setI(i+1);
-            panelPartida.add(carta);
-            i++;
-        }
-        mostrarCartaExtra();
-        panelPartida.revalidate();
-        panelPartida.repaint();
-    }
-
-    private void setRealeseCarta(){
-        carta.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                JLabelFondoArrastable cartaSoltada = (JLabelFondoArrastable) e.getComponent();
-                Rectangle areaCartaSoltada = cartaSoltada.getBounds();
-
-                for (Component comp : panelPartida.getComponents()) {
-                    Rectangle areaCartaComparada = comp.getBounds();
-                    Point centroCarta = new Point(areaCartaSoltada.x + areaCartaSoltada.width / 2, areaCartaSoltada.y + areaCartaSoltada.height / 2);
-                    if ("TOPE".equals(comp.getName())) {
-                        if (areaCartaComparada.contains(centroCarta)) {
-                            if(!levanto){
-                                cartaSoltada.setLocation(cartaSoltada.getPosicionOriginal());
-                            }
-                            else {
-                                if (!corta) {
-                                    controlador.tirarCarta(((JLabelFondoArrastable) cartaSoltada).getI());
-                                    tiro = true;
-                                } else {
-                                    controlador.cortar(((JLabelFondoArrastable) cartaSoltada).getI());
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    else if ("CARTA".equals(comp.getName()) && cartaSoltada != comp) {
-                        if (areaCartaComparada.contains(centroCarta)) {
-                            Point locacionCartaSoltada=cartaSoltada.getLocation();
-                            cartaSoltada.setLocation(areaCartaComparada.x, areaCartaComparada.y);
-                            comp.setLocation(locacionCartaSoltada.x,locacionCartaSoltada.y);
-                            controlador.moverCartas(cartaSoltada.getI(), ((JLabelFondoArrastable) comp).getI());
-                            break;
-                        }
-                    }
-                    else{
-                        cartaSoltada.setLocation(cartaSoltada.getPosicionOriginal());
-                    }
-                }
-            }
-        });
-    }
-
+    //MUESTRA POR PANTALLA EL MAZO DE CARTAS
     @Override
     public void mostrarMazo(ArrayList<CartaMostrable> mazo) {
         Component[] componentes = panelPartida.getComponents();
@@ -340,7 +263,7 @@ public class VistaGrafica implements IVista{
             }
         }
         mazoButton=new BotonFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\REVERSO.png");
-        mazoButton.setBounds(710, 215, 190, 270);
+        mazoButton.setBounds(433, 158, 117, 202);
         mazoButton.setName("MAZO");
         mazoButton.addActionListener(new ActionListener() {
             @Override
@@ -367,29 +290,36 @@ public class VistaGrafica implements IVista{
         }
     }
 
+    //ABRE UNA PANTALLA CON EL MENU PRINCIPAL
+    @Override
     public void mostrarMenuPrincipal(){
         menuPrincipal.setVisible(true);
     }
 
+    //NO SE USA EN LA VISTA GRAFICA YA QUE EL JUGADOR INTERACTUA CON LOS COMPONENTES DE LA PANTALLA
     @Override
     public void mostrarMenuJugador() {
-        //NO SIRVE PARA VISTA GRAFICA
+        //NO HACE NADA
     }
 
+    //NO SE USA EN LA VISTA GRAFICA YA QUE EL JUGADOR INTERACTUA CON LOS COMPONENTES DE LA PANTALLA
     @Override
     public void opcionesCartasTirar() {
-        //NO SIRVE PARA VISTA GRAFICA
+        //NO HACE NADA
     }
 
+    //NO SE USA EN LA VISTA GRAFICA YA QUE EL JUGADOR INTERACTUA CON LOS COMPONENTES DE LA PANTALLA
     @Override
     public void opcionesCartasTirarOCortar() {
-        //NO SIRVE PARA VISTA GRAFICA
+        //NO HACE NADA
     }
 
+    //VERIFICA SI ES EL TURNO DEL JUGADOR, SI ES EL TURNO HABILITA LOS COMPONENTES, CASO CONTRARIO
+    // SE DESHABILITAN LOS COMPONENTES DE LA PANTALLA PARA QUE EL JUGADOR ESPERE SU TURNO
     @Override
     public void verificarTurno() {
         Component[] components = panelPartida.getComponents();
-        if(!controlador.jugadorActual().equals(nombreJugador)){
+        if(!isTurno()){
             for (Component component : components) {
                 if(!component.getName().equals("CARTA")) {
                     component.setEnabled(false);
@@ -410,6 +340,7 @@ public class VistaGrafica implements IVista{
         levanto=false;
     }
 
+    //VERIFICA SI EL JUGADOR PERDIO Y EN ESE CASO SE LE MUESTRA UN CARTEL DE PERDEDOR
     @Override
     public void verificarPerdedores() {
         corta=false;
@@ -417,33 +348,11 @@ public class VistaGrafica implements IVista{
         for(String nombre: perdedores){
             if(nombre.equals(nombreJugador)){
               mostrarCartelPerdedor();
-              mostrarPuntos(controlador.obtenerJugadores());
             }
         }
     }
 
-    private void mostrarCartelPerdedor(){
-        iniciarPartidaFrame.setVisible(false);
-        panelPerdedor=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\Game_Over.png");
-        perdedorFrame= new JFrame("PERDISTE :(");
-        perdedorFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        perdedorFrame.setSize(800, 600);
-        perdedorFrame.setLocationRelativeTo(null);
-        perdedorFrame.setContentPane(panelPerdedor);
-        perdedorFrame.setVisible(true);
-    }
-
-    private void mostrarCartelGanador(){
-        iniciarPartidaFrame.setVisible(false);
-        panelGanador=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\GANADOR.png");
-        ganadorFrame= new JFrame("GANASTE :)");
-        ganadorFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ganadorFrame.setSize(800, 600);
-        ganadorFrame.setLocationRelativeTo(null);
-        ganadorFrame.setContentPane(panelGanador);
-        ganadorFrame.setVisible(true);
-    }
-
+    //MUESTRA POR PANTALLA LOS PUNTOS DE TODOS LOS JUGADORES
     @Override
     public void mostrarPuntos(ArrayList<JugadorMostrable> jugador) {
         if(tableroPuntos==null){
@@ -484,21 +393,19 @@ public class VistaGrafica implements IVista{
         tableroPuntos.setVisible(true);
     }
 
+    //EVALUA SI ES EL TURNO DEL JUGADOR Y DEVUELVE EL RESULTADO
     @Override
     public boolean isTurno() {
-        boolean es=false;
-        if(controlador.jugadorActual().equals(nombreJugador)){
-            es=true;
-        }
-        return es;
+        return controlador.jugadorActual().equals(nombreJugador);
     }
 
+    //AL PRINCIPIO DE CADA RONDA MUESTRA LA PANTALLA DE JUEGO CON LOS COMPONENTES CORRESPONDIENTES
     @Override
     public void limpiarPantalla() {
         if(iniciarPartidaFrame==null) {
             menuPrincipal.setVisible(false);
             panelPartida = new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\fondoPartida.png");
-            cortarButton.setBounds(1150, 470, 100, 40);
+            cortarButton.setBounds(690, 350, 90, 40);
             cortarButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -509,8 +416,8 @@ public class VistaGrafica implements IVista{
             panelPartida.add(cortarButton);
             iniciarPartidaFrame = new JFrame("PARTIDA CHINCHON "+nombreJugador);
             iniciarPartidaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            iniciarPartidaFrame.setSize(1300, 800);
-            iniciarPartidaFrame.setLocationRelativeTo(null);
+            iniciarPartidaFrame.setSize(800, 600);
+            iniciarPartidaFrame.setLocation(menuPrincipal.getLocation());
             iniciarPartidaFrame.setContentPane(panelPartida);
             iniciarPartidaFrame.setVisible(true);
         }
@@ -524,6 +431,8 @@ public class VistaGrafica implements IVista{
             panelPartida.repaint();
         }
     }
+
+    //MUESTRA POR PANTALLA LA MANO DEL JUGADOR
     @Override
     public void mostrarMano() {
         if(!controlador.obtenerCartasJugador(nombreJugador).isEmpty()) {
@@ -531,13 +440,14 @@ public class VistaGrafica implements IVista{
         }
     }
 
+    //MUESTRA POR PANTALLA LA ULTIMA CARTA LEVANTADA POR EL JUGADOR
     @Override
     public void mostrarCartaExtra() {
         if(controlador.obtenerCartaExtra(nombreJugador)!=null){
             CartaMostrable cartaExtra=controlador.obtenerCartaExtra(nombreJugador);
             carta=new JLabelFondoArrastable("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\"+cartaExtra.getPalo()+cartaExtra.getNumero()+".png");
             setRealeseCarta();
-            carta.setBounds((160*7)+5,520,158,220);
+            carta.setBounds((98*7)+3,390,97,165);
             ((JLabelFondoArrastable)carta).setI(8);
             carta.setName("CARTA");
             panelPartida.add(carta);
@@ -546,6 +456,97 @@ public class VistaGrafica implements IVista{
         }
     }
 
+    //CREA UN PANEL PRINCIPAL CON FONDO
+    private void createUIComponents() {
+        panelPrincipal=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\Menu_principal.png");
+    }
+
+    //SETEA LA PANTALLA EN LA QUE VA A APARECER EL BOTON VOLVER Y SETEA SU POSICION EN LA PANTALLA
+    private void setVolverButton(JFrame frame,int x,int y){
+        volverButton.setBounds(x,y,200,30);
+        volverButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+                mostrarMenuPrincipal();
+            }
+        });
+    }
+
+    //MUESTRA POR PANTALLA EL CONJUNTO DE CARTAS QUE RECIBE
+    private void mostrarCartas(ArrayList<CartaMostrable> cartasMostrable) {
+        Component[] componentes = panelPartida.getComponents();
+        for (Component comp : componentes) {
+            if ("CARTA".equals(comp.getName())) {
+                panelPartida.remove(comp);
+            }
+        }
+        panelPartida.revalidate();
+        panelPartida.repaint();
+        int i=0;
+        for(CartaMostrable c: cartasMostrable){
+            carta=new JLabelFondoArrastable("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\"+c.getPalo()+c.getNumero()+".png");
+            carta.setEnabled(true);
+            setRealeseCarta();
+            carta.setBounds((98*i)+3,390,97,165);
+            carta.setName("CARTA");
+            ((JLabelFondoArrastable)carta).setI(i+1);
+            panelPartida.add(carta);
+            i++;
+        }
+        mostrarCartaExtra();
+        panelPartida.revalidate();
+        panelPartida.repaint();
+    }
+
+    //DEFINE LAS ACCIONES QUE SE REALIZAN CUANDO UN JUGADOR SUELTA UNA CARTA
+    private void setRealeseCarta(){
+        carta.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                JLabelFondoArrastable cartaSoltada = (JLabelFondoArrastable) e.getComponent();
+                Rectangle areaCartaSoltada = cartaSoltada.getBounds();
+
+                for (Component comp : panelPartida.getComponents()) {
+                    Rectangle areaCartaComparada = comp.getBounds();
+                    Point centroCarta = new Point(areaCartaSoltada.x + areaCartaSoltada.width / 2, areaCartaSoltada.y + areaCartaSoltada.height / 2);
+                    if ("TOPE".equals(comp.getName())) {
+                        if (areaCartaComparada.contains(centroCarta)) {
+                            if(!levanto){
+                                cartaSoltada.setLocation(cartaSoltada.getPosicionOriginal());
+                            }
+                            else {
+                                if (!corta) {
+                                    controlador.tirarCarta(((JLabelFondoArrastable) cartaSoltada).getI());
+                                    tiro = true;
+                                } else {
+                                    controlador.cortar(((JLabelFondoArrastable) cartaSoltada).getI());
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    else if ("CARTA".equals(comp.getName()) && cartaSoltada != comp) {
+                        if (areaCartaComparada.contains(centroCarta)) {
+                            Point locacionCartaSoltada=cartaSoltada.getLocation();
+                            cartaSoltada.setLocation(areaCartaComparada.x, areaCartaComparada.y);
+                            comp.setLocation(locacionCartaSoltada.x,locacionCartaSoltada.y);
+                            if(isTurno()) {
+                                controlador.moverCartas(cartaSoltada.getI(), ((JLabelFondoArrastable) comp).getI());
+                            }
+                            break;
+                        }
+                    }
+                    else{
+                        cartaSoltada.setLocation(cartaSoltada.getPosicionOriginal());
+                    }
+                }
+            }
+        });
+    }
+
+    //VALIDA LA ENTRADA DE NOMBRE JUGADOR Y SI ES CORRECTA SE AGREGA AL JUEGO, CASO CONTRARIO MUESTRA
+    // EL ERROR
     private void agregarJugador(String string) {
         JLabel mensaje;
         if(nombreJugador==null) {
@@ -615,6 +616,7 @@ public class VistaGrafica implements IVista{
         }
     }
 
+    //MUESTRA POR PANTALLA LA LISTA DE JUGADORES EN JUEGO
     private void mostrarListaJugadores(){
         pantalla.setText("   LISTA DE JUGADORES\n\n");
         for(JugadorMostrable j:controlador.obtenerJugadores()) {
@@ -622,26 +624,55 @@ public class VistaGrafica implements IVista{
         }
     }
 
+    //MUESTRA POR PANTALLA EL RANKING DE LOS MEJORES 5 PUNTAJES
     private void mostrarRanking(){
         menuPrincipal.setVisible(false);
         JPanel panelRanking=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\Ranking.png");
         JTextArea entradas=new JTextArea();
         entradas.setOpaque(false);
         entradas.setEditable(false);
-        entradas.setBounds(150,300,300,500);
-        entradas.setFont(new Font("Courier New",Font.BOLD,20));
+        entradas.setBounds(145,293,300,500);
+        entradas.setFont(new Font("Monospaced", Font.PLAIN, 22));
+        entradas.setEditable(false);
+        entradas.setFocusable(false);
         JFrame rankingFrame = new JFrame("TOP 5");
         setVolverButton(rankingFrame,380,720);
         panelRanking.add(volverButton);
         panelRanking.add(entradas);
         RankingMostrable rankingMostrable=controlador.obtenerRanking();
         for(JugadorMostrable j: rankingMostrable.getRanking()){
-            entradas.append(j.getNombre()+ " - "+ j.getPuntos()+ "\n\n");
+            entradas.append(j.getNombre()+ ": "+ j.getPuntos()+ " PUNTOS\n\n");
         }
         rankingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         rankingFrame.setSize(600, 800);
-        rankingFrame.setLocationRelativeTo(null);
+        rankingFrame.setLocation(menuPrincipal.getLocation());
         rankingFrame.setContentPane(panelRanking);
         rankingFrame.setVisible(true);
+    }
+
+    //MUESTRA POR PANTALLA EL CARTEL DEL PERDEDOR
+    private void mostrarCartelPerdedor(){
+        iniciarPartidaFrame.setVisible(false);
+        panelPerdedor=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\Game_Over.png");
+        perdedorFrame= new JFrame("PERDISTE :(");
+        perdedorFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        perdedorFrame.setSize(800, 600);
+        perdedorFrame.setLocation(iniciarPartidaFrame.getLocation());
+        perdedorFrame.setContentPane(panelPerdedor);
+        perdedorFrame.setVisible(true);
+        mostrarPuntos(controlador.obtenerJugadores());
+    }
+
+    //MUESTRA POR PANTALLA EL CARTEL DEL GANADOR
+    private void mostrarCartelGanador(){
+        iniciarPartidaFrame.setVisible(false);
+        panelGanador=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\GANADOR.png");
+        ganadorFrame= new JFrame("GANASTE :)");
+        ganadorFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ganadorFrame.setSize(800, 600);
+        ganadorFrame.setLocation(iniciarPartidaFrame.getLocation());
+        ganadorFrame.setContentPane(panelGanador);
+        ganadorFrame.setVisible(true);
+        mostrarPuntos(controlador.obtenerJugadores());
     }
 }

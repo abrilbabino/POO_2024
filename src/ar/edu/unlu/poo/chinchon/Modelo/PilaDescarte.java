@@ -20,6 +20,7 @@ public class PilaDescarte extends PilaDeCartas{
         }
     }
 
+    //PERMITE LEVANTAR LA CARTA DEL TOPE DE LA PILA DESCARTE
     @Override
     public Carta darCarta() {
         Carta carta = cartaTope;
@@ -27,6 +28,7 @@ public class PilaDescarte extends PilaDeCartas{
         return carta;
     }
 
+    //PERMITE AGREGAR UNA CARTA A LA PILA DE DESCARTE, DEJANDOLA COMO TOPE
     @Override
     public void agregarCarta(Carta c) {
         pilaDeCartas.add(cartaTope);

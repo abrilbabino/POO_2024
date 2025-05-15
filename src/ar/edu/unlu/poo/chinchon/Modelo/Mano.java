@@ -32,6 +32,10 @@ public class Mano implements Serializable {
         mano.removeAll(cartas);
     }
 
+    public void vaciarMano(){
+        mano.clear();
+    }
+
     public Carta getCartaExtraTurno(){
         return cartaExtraTurno;
     }
@@ -44,26 +48,12 @@ public class Mano implements Serializable {
         return segundoJuego;
     }
 
-    public void setCartaExtraTurno(Carta c){
-        cartaExtraTurno=c;
+    public void agregarPrimerJuego(ArrayList<Carta> primero){
+        primerJuego.addAll(primero);
     }
 
-    public void recibirCarta(Carta c) {
-        mano.add(c);
-    }
-
-    public void moverCartas(int p1, int p2) {
-        Carta temp=mano.get(p1-1);
-        mano.set(p1-1,mano.get(p2-1));
-        mano.set(p2-1,temp);
-    }
-    public void moverCartaExtra(int p1){
-        Carta temp=mano.get(p1-1);
-        mano.set(p1-1,cartaExtraTurno);
-        setCartaExtraTurno(temp);
-    }
-    public void vaciarMano(){
-        mano.clear();
+    public void agregarSegundoJuego(ArrayList<Carta> segundo){
+        segundoJuego.addAll(segundo);
     }
 
     public void vaciarPrimerJuego(){
@@ -74,30 +64,46 @@ public class Mano implements Serializable {
         segundoJuego.clear();
     }
 
+    public void setCartaExtraTurno(Carta c){
+        cartaExtraTurno=c;
+    }
+
+    public void recibirCarta(Carta c) {
+        mano.add(c);
+    }
+
+    //PERMITE MOVER LAS CARTAS DE LA MANO PARA PODER ORDENAR LOS JUEGOS
+    public void moverCartas(int p1, int p2) {
+        Carta temp=mano.get(p1-1);
+        mano.set(p1-1,mano.get(p2-1));
+        mano.set(p2-1,temp);
+    }
+
+    //PERMITE INTERCAMBIAR LA POSICION DE LA ULTIMA CARTA LEVANTA Y UNA CARTA DE LA MANO
+    public void moverCartaExtra(int p1){
+        Carta temp=mano.get(p1-1);
+        mano.set(p1-1,cartaExtraTurno);
+        setCartaExtraTurno(temp);
+    }
+
+    //PERMITE TIRAR UNA CARTA DE LA MANO
     public Carta tirarCarta(Carta c){
         mano.remove(c);
         return  c;
     }
 
+    //PERMITE TIRAR LA ULTIMA CARTA LEVANTADA DE LA MANO
     public Carta tirarCartaExtra(){
         Carta c=this.getCartaExtraTurno();
         setCartaExtraTurno(null);
         return tirarCarta(c);
     }
 
+    //SIRVE CUANDO SE TIRA UNA CARTA DE LA MANO QUE NO ES LA ULTIMA LEVANTADA
     public Carta cambiarCartaExtraPorCartaMano(int posicionCarta){
         Carta c=mano.get(posicionCarta);
         mano.set(posicionCarta,cartaExtraTurno);
         setCartaExtraTurno(null);
         return tirarCarta(c);
     }
-
-    public void agregarPrimerJuego(ArrayList<Carta> primero){
-        primerJuego.addAll(primero);
-    }
-
-    public void agregarSegundoJuego(ArrayList<Carta> segundo){
-        segundoJuego.addAll(segundo);
-    }
-
 }

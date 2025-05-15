@@ -76,6 +76,16 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
         jugadores.add(j);
     }
 
+    //PERMITE OBTENER EL JUGADOR CUYO NOMBRE COINCIDE CON EL STRING
+    public Jugador obtenerJugador(String nombre) throws RemoteException{
+        for(Jugador j: jugadores){
+            if(nombre.equals(j.getNombre())){
+                return j;
+            }
+        }
+        return null;
+    }
+
     //SETEA EL TURNO DE LOS JUGADORES Y NOTIFICA CAMBIO DE TURNO
     @Override
     public void cambiarTurno() throws RemoteException {
@@ -129,6 +139,8 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
         pilaDescarte.vaciarPila();
     }
 
+    //PERMITE QUE EL JUGADOR ACTUAL (QUE TIENE EL TURNO) AGARRE UNA CARTA DEL MAZO Y NOTIFICA
+    // QUE SE SACO UNA CARTA DEL MAZO Y QUE SE AGREGO UNA CARTA A LA MANO
     @Override
     public void agarrarCartaDelMazo() throws RemoteException {
         if (mazo.isVacio()) {
@@ -140,16 +152,25 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
         notificarObservadores(Eventos.CAMBIA_MANO);
     }
 
+    //PERMITE QUE EL JUGADOR ACTUAL (QUE TIENE EL TURNO) LEVANTE LA CARTA TOPE DE LA PILA DE DESCARTE
+    //Y NOTIFICA EL CAMBIO EN LA CARTA DEL TOPE Y EN LA MANO DEL JUGADOR
     @Override
     public void agarrarCartaDeLaPiLaDescarte() throws RemoteException {
         jugadorActual.sacarCartaDeLaPiLaDescarte(pilaDescarte);
         notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
     }
 
+    //PERMITE QUE EL JUGADOR ACTUAL (QUE TIENE EL TURNO) TIRE LA ULTIMA CARTA QUE LEVANTO
+    //DEJANDO ESTA CARTA COMO NUEVO TOPE DE LA PILA DESCARTE Y NOTIFICA EL CAMBIO EN EL TOPE Y
+    //EN LA MANO DEL JUGADOR
     public void tirarCartaExtra() throws RemoteException{
         pilaDescarte.agregarCarta(jugadorActual.getMano().tirarCartaExtra());
         notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
     }
+
+    //PERMITE QUE EL JUGADOR ACTUAL (QUE TIENE EL TURNO) TIRE UNA CARTA DE SU MANO
+    //DEJANDO ESTA CARTA COMO NUEVO TOPE DE LA PILA DESCARTE Y NOTIFICA EL CAMBIO EN EL TOPE Y
+    //EN LA MANO DEL JUGADOR
     public void tirarCartaMano(int posCarta) throws RemoteException {
         pilaDescarte.agregarCarta(jugadorActual.getMano().cambiarCartaExtraPorCartaMano(posCarta));
         notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
@@ -192,29 +213,20 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
         notificarObservadores(Eventos.JUEGO_INICIADO);
     }
 
-    public Jugador obtenerJugador(String nombre) throws RemoteException{
-        for(Jugador j: jugadores){
-            if(nombre.equals(j.getNombre())){
-                return j;
-            }
-        }
-        return null;
-    }
-
-    //OBTIENE EL VALOR DE CortaCon SI ES CHINCHON SETEA EL GANADOR Y EL ESTADO DEL JUGADOR QUE GANO,
+    //OBTIENE EL VALOR DE CortaCon SI ES CHINCHON SETEA EL GANADOR Y EL ESTADO DE LOS JUGADORES YA SEA GANADOR O PERDEDOR,
     // CALCULA LOS PUNTOS Y TERMINA EL JUEGO SI CORTA CON MENOS_DIEZ O SOBRA_CARTA, SI CORTA CON
     // MENOS_DIEZ LE RESTA 10 A LOS PUNTOS DEL JUGADOR QUE CORTO,LUEGO EN AMBOS CASOS INCREMENTA
     // LA CANTIDAD DE RONDAS, CALCULA LOS PUNTOS DE LOS JUGADORES Y SE FIJA QUIENES PUEDEN SEGUIR JUGANDO,
-    // POR ULTIMO EMPIEZA UNA NUEVA RONDA
+    //EN EL CASO DE QUE LA CANTIDAD DE JUGADORES SEA MAYOR A UNO EMPIEZA UNA NUEVA RONDA
+    //CASO CONTRARIO SETEA EL GANADOR Y EL ESTADO DEL JUGADORES YA SEA GANADOR O PERDEDOR
+    //POR ULTIMO AGREGA EL PUNTAJE GANADOR AL RANKING
     @Override
     public boolean cortar(int opcion) throws RemoteException {
         boolean corta=false;
         if(opcion==8){
-            System.out.println("TIRA LA CARTA "+ jugadorActual.getMano().getCartaExtraTurno().getNumero() +" de "+ jugadorActual.getMano().getCartaExtraTurno().getPalo());
             tirarCartaExtra();
         }
         else{
-            System.out.println("TIRA LA CARTA "+jugadorActual.getMano().getCartas().get(opcion-1).getNumero()+ " de "+jugadorActual.getMano().getCartas().get(opcion-1).getPalo());
             tirarCartaMano(opcion-1);
         }
         if(validadorDeJuego.puedeCortar(jugadorActual.getMano())) {
@@ -223,6 +235,9 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
                 jugadorActual.setEstado(EstadoJugador.GANADOR);
                 for (Jugador j : jugadores) {
                     j.sumarPuntos(validadorDeJuego.calcularPuntos(j.getMano()));
+                    if(!j.getNombre().equals(jugadorActual.getNombre())){
+                        j.setEstado(EstadoJugador.PERDEDOR);
+                    }
                 }
                 ranking.agregarEntrada(getGanador());
                 notificarObservadores(Eventos.FIN_DEL_JUEGO);
@@ -273,7 +288,6 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
         }
         else{
             jugadorActual.getMano().setCartaExtraTurno(getPilaDescarte().darCarta());
-            System.out.println("DEVUELVE LA CARTA "+ jugadorActual.getMano().getCartaExtraTurno().getNumero()+ " de "+ jugadorActual.getMano().getCartaExtraTurno().getPalo());
             notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
         }
         Serializador serializador=new Serializador("RANKING.dat");
@@ -281,6 +295,8 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
         return corta;
     }
 
+    //SI HAY PERDEDORES LOS SACA DEL JUEGO PARA QUE NO PUEDAN SEGUIR JUGANDO Y NO SE TENGAN EN CUENTA
+    //EN LOS TURNOS
     public void sacarPerdedoresDelJuego() throws RemoteException{
         for(Jugador j: jugadores){
             if(!j.sigueJugando()){
