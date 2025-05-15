@@ -297,6 +297,7 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
 
     //SI HAY PERDEDORES LOS SACA DEL JUEGO PARA QUE NO PUEDAN SEGUIR JUGANDO Y NO SE TENGAN EN CUENTA
     //EN LOS TURNOS
+    @Override
     public void sacarPerdedoresDelJuego() throws RemoteException{
         for(Jugador j: jugadores){
             if(!j.sigueJugando()){
