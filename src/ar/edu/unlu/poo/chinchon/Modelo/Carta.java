@@ -19,5 +19,12 @@ public class Carta implements CartaMostrable{
         return palo;
     }
 
+    public void setNumero(int numero) {
+        this.numero = numero;
+    }
+
+    public void setPalo(Palo palo) {
+        this.palo = palo;
+    }
 }
 

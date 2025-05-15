@@ -314,6 +314,7 @@ public class VistaConsola extends JFrame implements  IVista {
     //AGREGA UN TEXTO CON SALTO DE LINEA A LA PANTALLA
     private void println(String texto) {
         print(texto + "\n");
+        saleTexto.setCaretPosition(saleTexto.getDocument().getLength());
     }
 
     //VALIDA LA ENTRADA DE NOMBRE JUGADOR Y SI ES CORRECTA SE AGREGA AL JUEGO, CASO CONTRARIO MUESTRA
@@ -624,7 +625,7 @@ public class VistaConsola extends JFrame implements  IVista {
         println("----------------------------------------------------------------------------------------");
         int i=1;
         for (JugadorMostrable j : controlador.obtenerRanking().getRanking()) {
-            println(i+ " - "+j.getNombre()+ ": "+ j.getPuntos());
+            println(i+ " - "+j.getNombre()+ ": "+ j.getPuntos()+ " PUNTOS");
             println("-------------------------------------------------------------------------------------");
             i++;
         }

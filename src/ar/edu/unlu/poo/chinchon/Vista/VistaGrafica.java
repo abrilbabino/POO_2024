@@ -35,10 +35,6 @@ public class VistaGrafica implements IVista{
     private JButton cortarButton;
     private JPanel panelAyuda;
     private JButton ayudaButton;
-    private JPanel panelPerdedor;
-    private JPanel panelGanador;
-    private JFrame perdedorFrame;
-    private JFrame ganadorFrame;
     private JTextField ingresaNombre;
     private JTextArea pantalla;
     private JButton enterButton;
@@ -652,6 +648,8 @@ public class VistaGrafica implements IVista{
 
     //MUESTRA POR PANTALLA EL CARTEL DEL PERDEDOR
     private void mostrarCartelPerdedor(){
+        JPanel panelPerdedor;
+        JFrame perdedorFrame;
         iniciarPartidaFrame.setVisible(false);
         panelPerdedor=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\Game_Over.png");
         perdedorFrame= new JFrame("PERDISTE :(");
@@ -665,6 +663,8 @@ public class VistaGrafica implements IVista{
 
     //MUESTRA POR PANTALLA EL CARTEL DEL GANADOR
     private void mostrarCartelGanador(){
+        JPanel panelGanador;
+        JFrame ganadorFrame;
         iniciarPartidaFrame.setVisible(false);
         panelGanador=new PanelFondo("C:\\Users\\Usuario\\IdeaProjects\\ProyectoFinal\\src\\ar\\edu\\unlu\\poo\\chinchon\\Imagenes\\GANADOR.png");
         ganadorFrame= new JFrame("GANASTE :)");
