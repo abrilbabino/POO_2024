@@ -28,7 +28,7 @@ public class RankingPuntos implements RankingMostrable{
     }
 
     //ORDENA EL RANKING DE MENOR A MAYOR, YA QUE UN MENOR PUNTAJE ES MEJOR
-    public void ordenarRanking() {
+    private void ordenarRanking() {
         ranking.sort((a, b) -> Integer.compare(a.getPuntos(), b.getPuntos()));
     }
 

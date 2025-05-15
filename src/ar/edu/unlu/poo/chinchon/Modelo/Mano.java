@@ -24,6 +24,26 @@ public class Mano implements Serializable {
         return this.mano;
     }
 
+    public Carta getCartaExtraTurno(){
+        return cartaExtraTurno;
+    }
+
+    public void setCartaExtraTurno(Carta c){
+        cartaExtraTurno=c;
+    }
+
+    public ArrayList<Carta> getPrimerJuego(){
+        return primerJuego;
+    }
+
+    public ArrayList<Carta> getSegundoJuego(){
+        return segundoJuego;
+    }
+
+    public void recibirCarta(Carta c) {
+        mano.add(c);
+    }
+
     public void recibirCartas(ArrayList<Carta> cartas){
         mano.addAll(cartas);
     }
@@ -34,18 +54,6 @@ public class Mano implements Serializable {
 
     public void vaciarMano(){
         mano.clear();
-    }
-
-    public Carta getCartaExtraTurno(){
-        return cartaExtraTurno;
-    }
-
-    public ArrayList<Carta> getPrimerJuego(){
-        return primerJuego;
-    }
-
-    public ArrayList<Carta> getSegundoJuego(){
-        return segundoJuego;
     }
 
     public void agregarPrimerJuego(ArrayList<Carta> primero){
@@ -62,14 +70,6 @@ public class Mano implements Serializable {
 
     public void vaciarSegundoJuego(){
         segundoJuego.clear();
-    }
-
-    public void setCartaExtraTurno(Carta c){
-        cartaExtraTurno=c;
-    }
-
-    public void recibirCarta(Carta c) {
-        mano.add(c);
     }
 
     //PERMITE MOVER LAS CARTAS DE LA MANO PARA PODER ORDENAR LOS JUEGOS
