@@ -272,7 +272,7 @@ public class VistaGrafica implements IVista{
             }
         });
         if(mazo.size()>1){
-            if(!tiro){
+            if(!tiro||!isTurno()){
                 mazoButton.setEnabled(false);
             }
             panelPartida.add(mazoButton);
