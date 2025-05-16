@@ -139,7 +139,7 @@ public class VistaGrafica implements IVista{
                         }
                     });
                     warningNoJugadoresSuf.add(cerrar, BorderLayout.SOUTH);
-                    warningNoJugadoresSuf.setLocation(menuPrincipal.getLocation());
+                    warningNoJugadoresSuf.setLocationRelativeTo(menuPrincipal);
                     warningNoJugadoresSuf.pack();
                     warningNoJugadoresSuf.setVisible(true);
                 }
@@ -498,6 +498,12 @@ public class VistaGrafica implements IVista{
     //DEFINE LAS ACCIONES QUE SE REALIZAN CUANDO UN JUGADOR SUELTA UNA CARTA
     private void setRealeseCarta(){
         carta.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                Component c = e.getComponent();
+                panelPartida.setComponentZOrder(c, 0);
+                panelPartida.repaint();
+            }
             @Override
             public void mouseReleased(MouseEvent e) {
                 JLabelFondoArrastable cartaSoltada = (JLabelFondoArrastable) e.getComponent();
