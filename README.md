@@ -17,3 +17,6 @@ Este proyecto es una implementación del clásico juego de cartas **Chinchón**,
 
 ## Link para acceder al UML
 **https://github.com/abrilbabino/POO_2024/blob/master/Chinchon.png**
+
+## Link para acceder a la presentacion
+**https://www.canva.com/design/DAGniijYqJs/AHVq85OJZP7QKnmYIHqq_g/edit?utm_content=DAGniijYqJs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton**
