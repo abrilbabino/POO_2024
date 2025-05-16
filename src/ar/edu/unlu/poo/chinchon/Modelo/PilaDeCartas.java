@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public abstract class PilaDeCartas implements Serializable {
-    protected ArrayList<Carta> pilaDeCartas=new ArrayList<>();
+    protected ArrayList<Carta> pilaDeCartas=new ArrayList<Carta>();
 
     public ArrayList<Carta> getPilaDeCartas(){
         return this.pilaDeCartas;

@@ -40,6 +40,7 @@ public class Mazo extends PilaDeCartas {
         if (pilaDeCartas.size() > 0) {
             carta = pilaDeCartas.get(pilaDeCartas.size() - 1);
             pilaDeCartas.remove(pilaDeCartas.size() - 1);
+            System.out.println("Carta sacada: " + carta + " | Cartas restantes: " + pilaDeCartas.size());
             return carta;
         }
         return carta;

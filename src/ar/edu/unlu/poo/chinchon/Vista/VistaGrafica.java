@@ -271,7 +271,7 @@ public class VistaGrafica implements IVista{
                 cortarButton.setEnabled(true);
             }
         });
-        if(mazo.size()>1){
+        if(mazo.size()>=1){
             if(!tiro||!isTurno()){
                 mazoButton.setEnabled(false);
             }

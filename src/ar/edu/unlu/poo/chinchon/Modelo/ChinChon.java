@@ -132,24 +132,25 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     // Y LA PONE COMO MAZO
     @Override
     public void cambiarMazoPorPilaDescarte() throws RemoteException {
-        notificarObservadores(Eventos.CAMBIA_MAZO);
         pilaDescarte.barajar();
-        mazo.setPilaDeCartas(pilaDescarte.getPilaDeCartas());
-        notificarObservadores(Eventos.CAMBIA_MAZO);
+        mazo.setPilaDeCartas(new ArrayList<>(pilaDescarte.getPilaDeCartas()));
         pilaDescarte.vaciarPila();
+        notificarObservadores(Eventos.CAMBIA_MAZO);
     }
 
     //PERMITE QUE EL JUGADOR ACTUAL (QUE TIENE EL TURNO) AGARRE UNA CARTA DEL MAZO Y NOTIFICA
     // QUE SE SACO UNA CARTA DEL MAZO Y QUE SE AGREGO UNA CARTA A LA MANO
     @Override
     public void agarrarCartaDelMazo() throws RemoteException {
-        if (mazo.isVacio()) {
-            cambiarMazoPorPilaDescarte();
-            notificarObservadores(Eventos.CAMBIA_MAZO);
-        }
         jugadorActual.sacarCartaDelMazo(mazo);
         notificarObservadores(Eventos.CAMBIA_MAZO);
         notificarObservadores(Eventos.CAMBIA_MANO);
+        if (mazo.isVacio()) {
+            notificarObservadores(Eventos.CAMBIA_MAZO);
+            System.out.println("MAZO VACIO");
+            cambiarMazoPorPilaDescarte();
+            notificarObservadores(Eventos.CAMBIA_MAZO);
+        }
     }
 
     //PERMITE QUE EL JUGADOR ACTUAL (QUE TIENE EL TURNO) LEVANTE LA CARTA TOPE DE LA PILA DE DESCARTE
@@ -174,6 +175,7 @@ public class ChinChon extends ObservableRemoto implements  IModelo{
     public void tirarCartaMano(int posCarta) throws RemoteException {
         pilaDescarte.agregarCarta(jugadorActual.getMano().cambiarCartaExtraPorCartaMano(posCarta));
         notificarObservadores(Eventos.CAMBIA_CARTA_TOPE);
+
     }
 
     //MUEVE LAS CARTAS DE LA MANO PARA IR ACOMODANDO EL JUEGO
